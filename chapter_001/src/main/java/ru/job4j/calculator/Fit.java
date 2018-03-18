@@ -6,13 +6,16 @@ package ru.job4j.calculator;
 public class Fit {
 
     private static final double COEFFICIENT = 1.15D;
+    private static final int MALE_RATE = 100;
+    private static final int FEMALE_RATE = 110;
+
     /**
      * Идеальный вес для мужщины.
      * @param height Рост.
      * @return идеальный вес.
      */
     public double manWeight(double height) {
-        return (height - 100) * COEFFICIENT;
+        return (height - MALE_RATE) * COEFFICIENT;
     }
 
     /**
@@ -21,6 +24,6 @@ public class Fit {
      * @return идеальный вес.
      */
     public double womanWeight(double height) {
-        return (height - 110) * COEFFICIENT;
+        return (height - FEMALE_RATE) * COEFFICIENT;
     }
 }
