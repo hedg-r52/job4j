@@ -3,7 +3,7 @@ package ru.job4j.loop;
 import java.util.function.BiPredicate;
 
 /**
- * @author Petr Arsentev (parsentev@yandex.ru)
+ * @author Andrei Soloviev (hedg.r52)
  * @version $Id$
  * @since 0.1
  */
@@ -32,10 +32,10 @@ public class Paint {
         );
     }
 
-    private String loopBy(int height, int weight, BiPredicate<Integer, Integer> predict) {
+    private String loopBy(int height, int width, BiPredicate<Integer, Integer> predict) {
         StringBuilder screen = new StringBuilder();
         for (int row = 0; row != height; row++) {
-            for (int column = 0; column != weight; column++) {
+            for (int column = 0; column != width; column++) {
                 if (predict.test(row, column)) {
                     screen.append("^");
                 } else {
