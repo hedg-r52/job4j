@@ -24,4 +24,19 @@ public class ArrayCharTest {
         boolean result = word.startWith("Hi");
         assertThat(result, is(false));
     }
+
+    @Test
+    public void whenContainsSub() {
+        ArrayChar word = new ArrayChar("Hello");
+        boolean result = word.contains("ll");
+        assertThat(result, is(true));
+    }
+
+    @Test
+    public void whenNotContainsSub() {
+        ArrayChar word = new ArrayChar("Hello");
+        boolean result = word.contains("low");
+        assertThat(result, is(false));
+    }
+
 }
