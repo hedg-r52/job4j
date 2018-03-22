@@ -26,7 +26,6 @@ public class BubbleSort {
                     notSwap = false;
                 }
             }
-            // выход если не было ни одного обмена
             if (notSwap) break;
         }
 
