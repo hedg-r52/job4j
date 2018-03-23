@@ -20,8 +20,8 @@ public class ArrayDuplicate {
 
         for (int i = 0; i < array.length - numDupl - 1; i++) {
             word = array[i];
-            for (int j = i + 1; j < array.length - numDupl; ) {
-                if ( word.equals(array[j]) ) {
+            for (int j = i + 1; j < array.length - numDupl;) {
+                if (word.equals(array[j])) {
                     numDupl++;
                     array[j] = array[array.length - numDupl];
                 } else {
@@ -30,7 +30,7 @@ public class ArrayDuplicate {
             }
         }
 
-        return Arrays.copyOf( array, array.length - numDupl);
+        return Arrays.copyOf(array, array.length - numDupl);
 
     }
 }

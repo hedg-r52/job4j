@@ -56,7 +56,9 @@ public class ArrayChar {
                     break;
                 }
             }
-            if (result) break;
+            if (result) {
+                break;
+            }
         }
 
         return result;
