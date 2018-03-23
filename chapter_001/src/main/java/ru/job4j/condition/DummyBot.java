@@ -13,9 +13,7 @@ public class DummyBot {
      * @return Ответ.
      */
     public String answer(String question) {
-
         String result = "Это ставит меня в тупик. Спросите другой вопрос.";
-
         if ("Привет, Бот.".equals(question)) {
             result = "Привет, умник.";
         } else if ("Пока.".equals(question)) {

@@ -17,7 +17,6 @@ public class ArrayDuplicate {
     public String[] remove(String[] array) {
         int numDupl = 0;
         String word;
-
         for (int i = 0; i < array.length - numDupl - 1; i++) {
             word = array[i];
             for (int j = i + 1; j < array.length - numDupl;) {
@@ -29,8 +28,6 @@ public class ArrayDuplicate {
                 }
             }
         }
-
         return Arrays.copyOf(array, array.length - numDupl);
-
     }
 }

@@ -13,13 +13,11 @@ public class Square {
      * @return строку с квадратами чисел от 1 до bound
      */
     public int[] calculate(int bound) {
-        int[] rst = new int[bound];
-
+        int[] result = new int[bound];
         for (int i = 1; i <= bound; i++) {
-            rst[i - 1] = (int) Math.pow(i, 2);
+            result[i - 1] = (int) Math.pow(i, 2);
         }
-
-        return rst;
+        return result;
     }
 
 }

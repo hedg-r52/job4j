@@ -21,7 +21,6 @@ public class ArrayChar {
     public boolean startWith(String prefix) {
         boolean result = true;
         char[] value = prefix.toCharArray();
-
         if (value.length <= data.length) {
             for (int i = 0; i < value.length; i++) {
                 if (data[i] != value[i]) {
@@ -32,7 +31,6 @@ public class ArrayChar {
         } else {
             result = false;
         }
-
         return result;
     }
 
@@ -43,14 +41,11 @@ public class ArrayChar {
      */
     public boolean contains(String sub) {
         boolean result = false;
-
         char[] value = sub.toCharArray();
-
         for (int i = 0; i < data.length - value.length + 1; i++) {
             for (int j = 0; j < value.length; j++) {
                 if (data[i] == value[j]) {
                     result = true;
-
                 } else {
                     result = false;
                     break;
@@ -60,7 +55,6 @@ public class ArrayChar {
                 break;
             }
         }
-
         return result;
     }
 }

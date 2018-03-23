@@ -40,15 +40,15 @@ public class Triangle {
      * @return Вернуть прощадь, если треугольник существует или -1, если треугольника нет.
      */
     public double area() {
-        double rsl = -1;
+        double result = -1;
         double ab = this.a.distanceTo(this.b);
         double ac = this.a.distanceTo(this.c);
         double bc = this.b.distanceTo(this.c);
         double p = this.period(ab, ac, bc);
         if (this.exist(ab, ac, bc)) {
-            rsl = Math.sqrt(p * (p - ab) * (p - ac) * (p - bc));
+            result = Math.sqrt(p * (p - ab) * (p - ac) * (p - bc));
         }
-        return rsl;
+        return result;
     }
 
     /**
@@ -62,7 +62,6 @@ public class Triangle {
      * @return Возвращает истина, если сумма двух сторон больше третьей стороны
      */
     private boolean exist(double ab, double ac, double bc) {
-
         return (ab + ac > bc)
                 && (ab + bc > ac)
                 && (bc + ac > ab);

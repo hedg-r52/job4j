@@ -12,20 +12,16 @@ public class FindLoop {
      * @param data входящий массив
      * @param el элемент для поиска
      * @return индекс найденного элемента
+     *          если элемента нет в массиве, то возвращаем -1.
      */
     public int indexOf(int[] data, int el) {
-
-        int rsl = -1; // если элемента нет в массиве, то возвращаем -1.
-
+        int result = -1;
         for (int index = 0; index < data.length; index++) {
             if (data[index] == el) {
-                rsl = index;
-
+                result = index;
                 break;
             }
         }
-
-        return rsl;
+        return result;
     }
-
 }

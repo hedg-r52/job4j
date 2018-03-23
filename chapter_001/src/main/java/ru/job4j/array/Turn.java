@@ -16,13 +16,10 @@ public class Turn {
         int mirrorI;
         for (int i = 0; i < (array.length / 2); i++) {
             mirrorI = array.length - 1 - i;
-
             array[i] = array[i] + array[mirrorI];
             array[mirrorI] =  array[i] - array[mirrorI];
             array[i] = array[i] - array[mirrorI];
         }
-
         return array;
     }
-
 }

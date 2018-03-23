@@ -20,7 +20,6 @@ public class SortedArray {
         int[] result = new int[array1.length + array2.length];
         int i = 0;
         int j = 0;
-
         while ((i < array1.length) || (j < array2.length)) {
             if (i == array1.length) {
                 for (int m = j; m < array2.length; m++) {
@@ -42,7 +41,6 @@ public class SortedArray {
                 j++;
             }
         }
-
         return result;
     }
 

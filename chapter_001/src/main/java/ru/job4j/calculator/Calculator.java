@@ -45,7 +45,6 @@ public class Calculator {
         this.result = first * second;
     }
 
-
     public double getResult() {
         return this.result;
     }
