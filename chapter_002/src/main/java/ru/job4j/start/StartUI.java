@@ -1,4 +1,9 @@
-package ru.job4j.tracker;
+package ru.job4j.start;
+
+import ru.job4j.tracker.ConsoleInput;
+import ru.job4j.tracker.Input;
+import ru.job4j.tracker.Item;
+import ru.job4j.tracker.Tracker;
 
 /**
  * @author Andrei Solovev (hedg.r52@gmail.com)
