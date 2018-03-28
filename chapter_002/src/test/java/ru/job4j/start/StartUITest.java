@@ -84,7 +84,7 @@ public class StartUITest {
         Input input = new StubInput(new String[]{"1", "6"});
         new StartUI(input, tracker).init();
         assertThat(
-                new String(this.out.toByteArray()),
+                this.out.toString(),
                 is(
                         new StringBuilder()
                                 .append(this.getMenu())
@@ -107,13 +107,7 @@ public class StartUITest {
         Tracker tracker = new Tracker();
         Input input = new StubInput(new String[]{"6"});
         new StartUI(input, tracker).init();
-        assertThat(
-                new String(this.out.toByteArray()),
-                is(
-                        new StringBuilder()
-                                .append(this.getMenu())
-                                .toString()
-                ));
+        assertThat(this.out.toString(), is(this.getMenu()));
     }
 
     private String getMenu() {
