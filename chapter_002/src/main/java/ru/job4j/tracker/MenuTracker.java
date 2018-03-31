@@ -28,8 +28,8 @@ public class MenuTracker {
 
     public void fillActions() {
         this.actions[0] = new MenuTracker.AddItemAction();
-        this.actions[1] = new MenuTracker.ShowAllItemsAction();
-        this.actions[2] = new MenuTracker.EditItemAction();
+        this.actions[1] = new ShowAllItemsAction();
+        this.actions[2] = this.new EditItemAction();
         this.actions[3] = new MenuTracker.DeleteItemAction();
         this.actions[4] = new MenuTracker.FindItemByIdAction();
         this.actions[5] = new MenuTracker.FindItemsByNameAction();
@@ -70,28 +70,7 @@ public class MenuTracker {
         }
     }
 
-    private static class ShowAllItemsAction implements UserAction {
-        @Override
-        public int key() {
-            return 1;
-        }
-
-        @Override
-        public void execute(Input input, Tracker tracker) {
-            System.out.println("------------ Список заявок --------------");
-            for (Item item : tracker.findAll()) {
-                System.out.println(item);
-            }
-            System.out.println("------------ Конец списка заявок --------------");
-        }
-
-        @Override
-        public String info() {
-            return String.format("%s. %s", this.key(), "Show all items.");
-        }
-    }
-
-    private static class EditItemAction implements UserAction {
+    private class EditItemAction implements UserAction {
         @Override
         public int key() {
             return 2;
@@ -212,3 +191,23 @@ public class MenuTracker {
     }
 }
 
+class ShowAllItemsAction implements UserAction {
+    @Override
+    public int key() {
+        return 1;
+    }
+
+    @Override
+    public void execute(Input input, Tracker tracker) {
+        System.out.println("------------ Список заявок --------------");
+        for (Item item : tracker.findAll()) {
+            System.out.println(item);
+        }
+        System.out.println("------------ Конец списка заявок --------------");
+    }
+
+    @Override
+    public String info() {
+        return String.format("%s. %s", this.key(), "Show all items.");
+    }
+}
