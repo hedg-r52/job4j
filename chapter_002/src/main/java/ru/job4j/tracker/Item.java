@@ -56,4 +56,20 @@ public class Item {
     public String[] getComments() {
         return this.comments;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("ID : ")
+                .append(this.getId())
+                .append("  Заявка: ")
+                .append(this.getName())
+                .append(System.lineSeparator())
+                .append("Описание : ")
+                .append(this.getDesc())
+                .append(System.lineSeparator())
+                .append("------------")
+                .append(System.lineSeparator())
+                .toString();
+    }
 }

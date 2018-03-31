@@ -3,10 +3,7 @@ package ru.job4j.start;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.job4j.tracker.Input;
-import ru.job4j.tracker.Item;
-import ru.job4j.tracker.StubInput;
-import ru.job4j.tracker.Tracker;
+import ru.job4j.tracker.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -92,8 +89,7 @@ public class StartUITest {
                                 .append("ID : ")
                                 .append(item.getId())
                                 .append("  Заявка: test\r\n")
-                                .append("Описание : \r\n")
-                                .append("desc\r\n")
+                                .append("Описание : desc\r\n")
                                 .append("------------\r\n")
                                 .append(System.lineSeparator())
                                 .append("------------ Конец списка заявок --------------\r\n")
@@ -112,14 +108,13 @@ public class StartUITest {
 
     private String getMenu() {
         return new StringBuilder()
-                .append("Меню\r\n")
-                .append("0. Добавить новую заявку\r\n")
-                .append("1. Показать все заявки\r\n")
-                .append("2. Редактировать заявку\r\n")
-                .append("3. Удалить заявку\r\n")
-                .append("4. Найти заявку по ID\r\n")
-                .append("5. Найти заявки по имени\r\n")
-                .append("6. Выход из программы\r\n")
+                .append("0. Add the new item.\r\n")
+                .append("1. Show all items.\r\n")
+                .append("2. Edit item.\r\n")
+                .append("3. Delete item.\r\n")
+                .append("4. Find item by id.\r\n")
+                .append("5. Find items by name.\r\n")
+                .append("6. Exit Program.\r\n")
                 .toString();
     }
 }
