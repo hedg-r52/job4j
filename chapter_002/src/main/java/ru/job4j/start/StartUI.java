@@ -10,6 +10,7 @@ import ru.job4j.tracker.*;
 public class StartUI {
     private final Input input;
     private final Tracker tracker;
+    private int[] ranges;
     private boolean exit;
 
     /**
@@ -29,10 +30,10 @@ public class StartUI {
     public void init() {
         MenuTracker menu = new MenuTracker(input, tracker);
         menu.fillActions();
+        ranges = menu.getRange();
         do {
             menu.show();
-            String key = input.ask("Select:");
-            menu.select(Integer.valueOf(key));
+            menu.select(input.ask("Select:", ranges));
         } while (!menu.isExit());
     }
 
@@ -41,6 +42,6 @@ public class StartUI {
      * @param args аргументы
      */
     public static void main(String[] args) {
-        new StartUI(new ConsoleInput(), new Tracker()).init();
+        new StartUI(new ValidateInput(), new Tracker()).init();
     }
 }

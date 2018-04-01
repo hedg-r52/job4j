@@ -1,5 +1,7 @@
 package ru.job4j.tracker;
 
+import java.util.Arrays;
+
 /**
  * @author Andrei Soloviev (hedg.r52@gmail.com)
  * @version $Id$
@@ -34,6 +36,25 @@ public class MenuTracker {
         this.actions[4] = new MenuTracker.FindItemByIdAction();
         this.actions[5] = new MenuTracker.FindItemsByNameAction();
         this.actions[6] = new MenuTracker.ExitAction(this);
+    }
+
+    /**
+     * Возвращает массив с пунктами меню
+     *  устанавливаем длину результирующего массива равной
+     *  длине массива actions, по циклу проходим все элементы actions
+     *  и если элемент массива не пустой то добавляем в результирующий
+     *  перед возвратом возвращаем только найденное количество элементов
+     * @return массив с доступными пунктами меню
+     */
+    public int[] getRange() {
+        int[] result = new int[this.actions.length];
+        int count = 0;
+        for (int i = 0; i < this.actions.length; i++) {
+            if (actions[i] != null) {
+                result[count++] = actions[i].key();
+            }
+        }
+        return Arrays.copyOf(result, count);
     }
 
     public void select(int key) {
