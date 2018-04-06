@@ -26,6 +26,16 @@ public class StubInputTest {
         assertThat(result, is(1));
     }
 
+    @Test(expected = MenuOutException.class)
+    public void whenAskEightFromMenuThenGetMenuOutException() {
+        StubInput input = new StubInput(new String[] {"8"});
+        Tracker tracker = new Tracker();
+        MenuTracker menu = new MenuTracker(input, tracker);
+        menu.fillActions();
+        int[] ranges = menu.getRange();
+        int result = input.ask("Enter", ranges);
+    }
+
     @Before
     public void loadMem() {
         System.setOut(new PrintStream(this.mem));
