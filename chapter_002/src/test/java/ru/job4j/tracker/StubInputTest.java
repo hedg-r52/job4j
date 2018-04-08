@@ -7,13 +7,22 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class StubInputTest {
     private final ByteArrayOutputStream mem = new ByteArrayOutputStream();
     private final PrintStream out = System.out;
+
+    @Before
+    public void loadMem() {
+        System.setOut(new PrintStream(this.mem));
+    }
+
+    @After
+    public void loadSys() {
+        System.setOut(this.out);
+    }
 
     @Test
     public void whenAskOneFromMenuThenResultEqualsOne() {
@@ -35,17 +44,4 @@ public class StubInputTest {
         int[] ranges = menu.getRange();
         int result = input.ask("Enter", ranges);
     }
-
-    @Before
-    public void loadMem() {
-        System.setOut(new PrintStream(this.mem));
-    }
-
-    @After
-    public void loadSys() {
-        System.setOut(this.out);
-    }
-
-
-
 }
