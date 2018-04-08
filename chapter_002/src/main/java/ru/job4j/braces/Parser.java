@@ -26,7 +26,7 @@ public class Parser {
 
     public boolean validate() {
         Queue queue = new Queue(str.length());
-        for(char c : str.toCharArray()) {
+        for (char c : str.toCharArray()) {
             if (isOpenBrace(c)) {
                 queue.add(c);
             } else if (isCloseBrace(c)) {

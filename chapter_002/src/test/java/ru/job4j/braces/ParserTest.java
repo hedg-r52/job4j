@@ -36,11 +36,11 @@ public class ParserTest {
         parser.add(new Brace('{', '}'));
         parser.add(new Brace('[', ']'));
         String result = parser.parse();
-        String expected = "{:0 }:9\r\n" +
-                "{:1 }:6\r\n" +
-                "[:2 ]:3\r\n" +
-                "(:4 ):5\r\n" +
-                "(:7 ):8\r\n";
+        String expected = "{:0 }:9\r\n"
+                + "{:1 }:6\r\n"
+                + "[:2 ]:3\r\n"
+                + "(:4 ):5\r\n"
+                + "(:7 ):8\r\n";
         assertThat(result, is(expected));
 
     }
