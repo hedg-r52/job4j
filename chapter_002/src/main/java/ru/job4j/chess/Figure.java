@@ -47,5 +47,5 @@ public abstract class Figure {
      * @param dest ячейка куда делается ход
      * @return true если можно сделать ход
      */
-    public abstract boolean canMove(Cell source, Cell dest);
+    public abstract boolean canMove(Cell source, Cell dest) throws ImpossibleMoveException;
 }

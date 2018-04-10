@@ -27,27 +27,20 @@ public class Bishop extends Figure {
      */
     @Override
     public Cell[] way(Cell source, Cell dest) throws ImpossibleMoveException {
-        Cell[] result = new Cell[32];
-        int count = 0;
         if (dest.equals(source)) {
             throw new ImpossibleMoveException();
         }
-        Cell[] map = getPossibleMoves(source, dest);
-        if (!cellAtMap(dest, map)) {
-            throw new ImpossibleMoveException();
-        }
+        int moves = Math.abs(source.x - dest.x);
+        Cell[] result = new Cell[moves];
+        int count;
         int stepX = (source.x > dest.x ? -1 : 1);
         int stepY = (source.y > dest.y ? -1 : 1);
         int x = source.x + stepX;
         int y = source.y + stepY;
-        while ((x >= 0 && x < Board.BOARD_SIZE)
-                && (y >= 0 && y < Board.BOARD_SIZE)) {
-            result[count++] = new Cell(x, y);
+        for (count = 0; count < moves; count++) {
+            result[count] = new Cell(x, y);
             x = x + stepX;
             y = y + stepY;
-        }
-        if (result.length == 0) {
-            throw new ImpossibleMoveException();
         }
         return Arrays.copyOf(result, count);
     }
@@ -69,39 +62,14 @@ public class Bishop extends Figure {
      * @return true если можно сделать ход
      */
     @Override
-    public boolean canMove(Cell source, Cell dest) {
-        Cell[] map = getPossibleMoves(source, dest);
-        return  cellAtMap(dest, map);
-    }
-
-    /**
-     * Получить массив (карта) всех возможных ходов из ячейки source
-     * @param source ячейка откуда делается ход
-     * @param dest ячейка куда делается ход
-     * @return массив всех возможных ходов
-     */
-    private Cell[] getPossibleMoves(Cell source, Cell dest) {
-        int count = 0;
-        Cell[] result = new Cell[32];
-        for (int y = 0; y < Board.BOARD_SIZE; y++) {
-            int x = source.x - source.y + y;
-            if (x == source.x && y == source.y) {
-                continue;
-            }
-            if (x >= 0 && x < Board.BOARD_SIZE) {
-                result[count++] = new Cell(x, y);
-            }
+    public boolean canMove(Cell source, Cell dest) throws ImpossibleMoveException {
+        if (inBounds(source.x) && inBounds(source.y)
+                && inBounds(dest.x) && inBounds(dest.y)) {
+            Cell[] way = way(source, dest);
+            return  cellOnTheWay(dest, way);
+        } else {
+            return false;
         }
-        for (int y = 0; y < Board.BOARD_SIZE; y++) {
-            int x = source.x + source.y - y;
-            if (x == source.x && y == source.y) {
-                continue;
-            }
-            if (x >= 0 && x < Board.BOARD_SIZE) {
-                result[count++] = new Cell(x, y);
-            }
-        }
-        return Arrays.copyOf(result, count);
     }
 
     /**
@@ -111,7 +79,7 @@ public class Bishop extends Figure {
      * @param map массив ячеек куда можно сделать ход
      * @return true если ячейка входит в массив ячеек
      */
-    private boolean cellAtMap(Cell dest, Cell[] map) {
+    private boolean cellOnTheWay(Cell dest, Cell[] map) {
         boolean result = false;
         for (Cell cell : map) {
             if (dest.equals(cell)) {
@@ -122,5 +90,8 @@ public class Bishop extends Figure {
         return result;
     }
 
+    private boolean inBounds(int i) {
+        return (i >= 0 && i < Board.BOARD_SIZE);
+    }
 
 }
