@@ -9,10 +9,8 @@ public class ParserTest {
     @Test
     public void whenValidStringThenSequenceValid() {
         String str = "[{}{}]";
-        Parser parser = new Parser(str);
-        parser.add(new Brace('(', ')'));
-        parser.add(new Brace('{', '}'));
-        parser.add(new Brace('[', ']'));
+        String braces = "{}[]()";
+        Parser parser = new Parser(str, braces);
         boolean result = parser.validate();
         assertThat(result, is(true));
     }
@@ -20,10 +18,8 @@ public class ParserTest {
     @Test
     public void whenInvalidStringThenSequenceInvalid() {
         String str = "{[}]";
-        Parser parser = new Parser(str);
-        parser.add(new Brace('(', ')'));
-        parser.add(new Brace('{', '}'));
-        parser.add(new Brace('[', ']'));
+        String braces = "{}[]()";
+        Parser parser = new Parser(str, braces);
         boolean result = parser.validate();
         assertThat(result, is(false));
     }
@@ -31,10 +27,8 @@ public class ParserTest {
     @Test
     public void whenValidStringThenGetStringBracePositions() {
         String str = "{{[]()}()}";
-        Parser parser = new Parser(str);
-        parser.add(new Brace('(', ')'));
-        parser.add(new Brace('{', '}'));
-        parser.add(new Brace('[', ']'));
+        String braces = "{}[]()";
+        Parser parser = new Parser(str, braces);
         String result = parser.parse();
         String expected = "{:0 }:9\r\n"
                 + "{:1 }:6\r\n"

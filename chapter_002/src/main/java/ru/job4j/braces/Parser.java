@@ -1,6 +1,6 @@
 package ru.job4j.braces;
 
-import java.sql.SQLOutput;
+import java.util.Stack;
 
 /**
  * Parser
@@ -9,118 +9,76 @@ import java.sql.SQLOutput;
  * @since 0.1
  */
 public class Parser {
-    private Brace[] braces;
     private String str;
-    private Queue queue;
-    private int countBraces = 0;
+    private Braces braces;
+    private Stack<Character> stack;
 
-    public Parser(String str) {
-        this.braces = new Brace[5];
+    public Parser(String str, String strBraces) {
         this.str = str;
-        this.queue = new Queue(str.length());
-    }
-
-    public void add(Brace brace) {
-        this.braces[countBraces++] = brace;
+        this.stack = new Stack<Character>();
+        this.braces = new Braces();
+        this.braces.add(strBraces);
     }
 
     public boolean validate() {
-        Queue queue = new Queue(str.length());
-        for (char c : str.toCharArray()) {
-            if (isOpenBrace(c)) {
-                queue.add(c);
-            } else if (isCloseBrace(c)) {
-                if (getOpenBrace(c) == queue.getLast()) {
-                    queue.del();
-                } else {
-                    queue.add(c);
-                }
+        this.stack.clear();
+        for (Character c : str.toCharArray()) {
+            if (braces.list.containsKey(c)) {
+                stack.push(c);
+            } else if (c.equals(braces.list.get(stack.lastElement()))) {
+                stack.pop();
+            } else {
+                break;
             }
         }
-        return (queue.length() == 0);
+        return (stack.empty());
     }
 
     public String parse() {
         StringBuilder sb = new StringBuilder();
-        Queue queue = new Queue(str.length());
         int counter;
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
             counter = 0;
-            if (isOpenBrace(c)) {
-                counter++;
-                sb.append(c + ":" + i);
-                for (int j = i + 1; j < str.length(); j++) {
-                    char ch = str.charAt(j);
-                    if (c == ch) {
-                        counter++;
-                    } else if (getCloseBrace(c) == ch) {
-                        counter--;
-                    }
-                    if (counter == 0) {
-                        sb.append(" " + getCloseBrace(c) + ":" + j);
-                        sb.append(System.lineSeparator());
-                        break;
-                    }
-                }
+            if (braces.list.containsKey(c)) {
+               sb.append(
+                        String.format("%s:%d %s:%d\r\n",
+                                c, i, this.braces.list.get(c), findCloseBrace(c, i)
+                        )
+                );
             }
         }
         return sb.toString();
     }
 
-    private boolean isOpenBrace(char c) {
-        boolean result = false;
-        for (int i = 0; i < countBraces; i++) {
-            if (c == this.braces[i].openBrace) {
-                result = true;
+    private int findCloseBrace(char c, int iterator) {
+        int result = -1;
+        int counter = 1;
+        for (int i = iterator + 1; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == c) {
+                counter++;
+            } else if (ch == this.braces.list.get(c)) {
+                counter--;
+            }
+            if (counter == 0) {
+                result = i;
                 break;
             }
         }
         return result;
-    }
 
-    private boolean isCloseBrace(char c) {
-        boolean result = false;
-        for (int i = 0; i < countBraces; i++) {
-            if (c == this.braces[i].closeBrace) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    private char getOpenBrace(char closeBrace) {
-        char result = 0;
-        for (int i = 0; i < countBraces; i++) {
-            if (closeBrace == this.braces[i].closeBrace) {
-                result = this.braces[i].openBrace;
-                break;
-            }
-        }
-        return result;
-    }
-
-    private char getCloseBrace(char openBrace) {
-        char result = 0;
-        for (int i = 0; i < countBraces; i++) {
-            if (openBrace == this.braces[i].openBrace) {
-                result = this.braces[i].closeBrace;
-                break;
-            }
-        }
-        return result;
     }
 
     public static void main(String[] args) {
         String str = "{{[]()}()}";
-        Parser parser = new Parser(str);
-        parser.add(new Brace('(', ')'));
-        parser.add(new Brace('{', '}'));
-        parser.add(new Brace('[', ']'));
+        String braces = "{}[]()";
+        Parser parser = new Parser(str, braces);
         if (parser.validate()) {
             System.out.println(str);
             System.out.println(parser.parse());
         }
     }
 }
+/*
+*/
