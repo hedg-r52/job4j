@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -30,7 +31,7 @@ public class StubInputTest {
         Tracker tracker = new Tracker();
         MenuTracker menu = new MenuTracker(input, tracker);
         menu.fillActions();
-        int[] ranges = menu.getRange();
+        List<Integer> ranges = menu.getRange();
         int result = input.ask("Enter", ranges);
         assertThat(result, is(1));
     }
@@ -41,7 +42,7 @@ public class StubInputTest {
         Tracker tracker = new Tracker();
         MenuTracker menu = new MenuTracker(input, tracker);
         menu.fillActions();
-        int[] ranges = menu.getRange();
+        List<Integer> ranges = menu.getRange();
         int result = input.ask("Enter", ranges);
     }
 }

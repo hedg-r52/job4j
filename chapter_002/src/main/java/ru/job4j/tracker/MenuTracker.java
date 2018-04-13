@@ -1,6 +1,8 @@
 package ru.job4j.tracker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Andrei Soloviev (hedg.r52@gmail.com)
@@ -11,7 +13,7 @@ public class MenuTracker {
 
     private Input input;
     private Tracker tracker;
-    private UserAction[] actions = new UserAction[7];
+    private List<UserAction> actions = new ArrayList<>();
     private boolean exit;
 
     public MenuTracker(Input input, Tracker tracker) {
@@ -29,13 +31,13 @@ public class MenuTracker {
     }
 
     public void fillActions() {
-        this.actions[0] = new MenuTracker.AddItemAction(0, "Add the new item.");
-        this.actions[1] = new ShowAllItemsAction(1, "Show all items.");
-        this.actions[2] = this.new EditItemAction(2, "Edit item.");
-        this.actions[3] = new MenuTracker.DeleteItemAction(3, "Delete item.");
-        this.actions[4] = new MenuTracker.FindItemByIdAction(4, "Find item by id.");
-        this.actions[5] = new MenuTracker.FindItemsByNameAction(5, "Find items by name.");
-        this.actions[6] = new MenuTracker.ExitAction(6, "Exit Program.", this);
+        this.actions.add(new MenuTracker.AddItemAction(0, "Add the new item."));
+        this.actions.add(new ShowAllItemsAction(1, "Show all items."));
+        this.actions.add(this.new EditItemAction(2, "Edit item."));
+        this.actions.add(new MenuTracker.DeleteItemAction(3, "Delete item."));
+        this.actions.add(new MenuTracker.FindItemByIdAction(4, "Find item by id."));
+        this.actions.add(new MenuTracker.FindItemsByNameAction(5, "Find items by name."));
+        this.actions.add(new MenuTracker.ExitAction(6, "Exit Program.", this));
     }
 
     /**
@@ -46,19 +48,19 @@ public class MenuTracker {
      *  перед возвратом возвращаем только найденное количество элементов
      * @return массив с доступными пунктами меню
      */
-    public int[] getRange() {
-        int[] result = new int[this.actions.length];
+    public List<Integer> getRange() {
+        List<Integer> result = new ArrayList<>();
         int count = 0;
-        for (int i = 0; i < this.actions.length; i++) {
-            if (actions[i] != null) {
-                result[count++] = actions[i].key();
+        for (UserAction action : this.actions) {
+            if (action != null) {
+                result.add(action.key());
             }
         }
-        return Arrays.copyOf(result, count);
+        return result;
     }
 
     public void select(int key) {
-        this.actions[key].execute(this.input, this.tracker);
+        this.actions.get(key).execute(this.input, this.tracker);
     }
 
     public void show() {
@@ -149,8 +151,8 @@ public class MenuTracker {
         public void execute(Input input, Tracker tracker) {
             System.out.println("------------ Вывод заявки по id --------------");
             String key = input.ask("Введите имя заявки:");
-            Item[] findedItems = tracker.findByName(key);
-            if (findedItems.length > 0) {
+            List<Item> findedItems = tracker.findByName(key);
+            if (findedItems.size() > 0) {
                 for (Item item : findedItems) {
                     System.out.println(item);
                 }

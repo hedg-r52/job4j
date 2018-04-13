@@ -2,6 +2,8 @@ package ru.job4j.start;
 
 import ru.job4j.tracker.*;
 
+import java.util.List;
+
 /**
  * @author Andrei Solovev (hedg.r52@gmail.com)
  * @version $Id$
@@ -10,7 +12,7 @@ import ru.job4j.tracker.*;
 public class StartUI {
     private final Input input;
     private final Tracker tracker;
-    private int[] ranges;
+    private List<Integer> ranges;
     private boolean exit;
 
     /**

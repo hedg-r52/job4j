@@ -1,6 +1,10 @@
 package ru.job4j.tracker;
 
 import org.junit.Test;
+import ru.job4j.list.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -12,7 +16,7 @@ public class TrackerTest {
         Tracker tracker = new Tracker();
         Item item = new Item("test", "testDescription", 123L);
         tracker.add(item);
-        assertThat(tracker.findAll()[0], is(item));
+        assertThat(tracker.findAll().get(0), is(item));
     }
 
     @Test
@@ -21,8 +25,8 @@ public class TrackerTest {
         Item item = new Item("test", "testDescription", 123L);
         tracker.add(item);
         Item replaceItem = new Item("replace", "replaceDescription", 1234L);
-        tracker.replace(tracker.findAll()[0].getId(), replaceItem);
-        assertThat(tracker.findAll()[0], is(replaceItem));
+        tracker.replace(tracker.findAll().get(0).getId(), replaceItem);
+        assertThat(tracker.findAll().get(0), is(replaceItem));
     }
 
     @Test
@@ -34,10 +38,11 @@ public class TrackerTest {
         tracker.add(item2);
         Item item3 = new Item("test3", "testDescription", 123L);
         tracker.add(item3);
-        String id = tracker.findAll()[0].getId();
+        String id = tracker.findAll().get(0).getId();
         tracker.delete(id);
         assertNull(tracker.findById(id));
     }
+
 
     @Test
     public void whenFindAllLengthEqualsTwo() {
@@ -46,7 +51,7 @@ public class TrackerTest {
         Item item2 = new Item("test2", "testDescription2", 123L);
         tracker.add(item1);
         tracker.add(item2);
-        assertThat(tracker.findAll().length, is(2));
+        assertThat(tracker.findAll().size(), is(2));
     }
 
     @Test
@@ -54,16 +59,21 @@ public class TrackerTest {
         Tracker tracker = new Tracker();
         Item item = new Item("test", "testDescription", 123L);
         tracker.add(item);
-        assertThat(tracker.findByName("test"), is(new Item[] {item}));
-        assertThat(tracker.findByName("test2"), is(new Item[] {}));
+        List<Item> list = new ArrayList<>();
+        assertThat(tracker.findByName("test2"), is(list));
+        list.add(item);
+        assertThat(tracker.findByName("test"), is(list));
+
     }
+
+
 
     @Test
     public void whenFindByIdItemEqualsItem() {
         Tracker tracker = new Tracker();
         Item item = new Item("test", "testDescription", 123L);
         tracker.add(item);
-        String id = tracker.findAll()[0].getId();
+        String id = tracker.findAll().get(0).getId();
         assertThat(tracker.findById(id), is(item));
 
     }
