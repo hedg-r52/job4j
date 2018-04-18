@@ -7,6 +7,8 @@ import ru.job4j.tracker.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -61,7 +63,9 @@ public class StartUITest {
         Item item = tracker.add(new Item("test name", "desc"));
         Input input = new StubInput(new String[]{"5", "test", "6"});
         new StartUI(input, tracker).init();
-        assertThat(tracker.findByName("test name"), is(new Item[] {item}));
+        List<Item> result = new ArrayList<>();
+        result.add(item);
+        assertThat(tracker.findByName("test name"), is(result));
     }
 
     @Before
