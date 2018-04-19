@@ -59,8 +59,8 @@ public class Bank {
         boolean result = false;
         if (!(srcUser.isNull() || dstUser.isNull() || srcAccount.isNull() || dstAccount.isNull())) {
             if (srcAccount.getValues() >= amount) {
-                srcAccount.setValues( srcAccount.getValues() - amount);
-                dstAccount.setValues( dstAccount.getValues() + amount);
+                srcAccount.setValues(srcAccount.getValues() - amount);
+                dstAccount.setValues(dstAccount.getValues() + amount);
                 result = true;
             }
         }
@@ -79,7 +79,7 @@ public class Bank {
 
     protected Account getAccountByRequisite(User user, String requisite) {
         Account result = new NullAccount(0D, "");
-        for(Account account : this.users.get(user)) {
+        for (Account account : this.users.get(user)) {
             if (requisite.equals(account.getRequisites())) {
                 result = account;
                 break;

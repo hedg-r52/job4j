@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class BankTest {
     @Test
-    public void whenAddUserThenFindThatUserByPassport(){
+    public void whenAddUserThenFindThatUserByPassport() {
         Bank bank = new Bank();
         User expected = new User("user", "2200 123321");
         bank.addUser(expected);
