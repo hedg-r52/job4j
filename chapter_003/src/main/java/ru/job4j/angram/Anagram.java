@@ -1,10 +1,8 @@
 package ru.job4j.angram;
 
 import org.apache.commons.lang.ArrayUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Анаграмма
