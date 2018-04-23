@@ -18,27 +18,27 @@ public class DeptSortTest {
     @Test
     public void whenGetUnsortedListThenSortByDept() {
         DeptSort deptSort = new DeptSort();
-        List<String> depts = new ArrayList<>();
-        depts.add("K1\\S2");
-        depts.add("K1\\S1\\D13");
-        depts.add("K2\\S2");
-        List<String> result = deptSort.sort(depts);
-        List<String> expected = new ArrayList<>();
-        expected.add("K1");
-        expected.add("K1\\S1");
-        expected.add("K1\\S1\\D13");
-        expected.add("K1\\S2");
-        expected.add("K2");
-        expected.add("K2\\S2");
+        List<Org> depts = new ArrayList<>();
+        depts.add(new Org("K1\\S2"));
+        depts.add(new Org("K1\\S1\\D13"));
+        depts.add(new Org("K2\\S2"));
+        List<Org> result = deptSort.sort(depts);
+        List<Org> expected = new ArrayList<>();
+        expected.add(new Org("K1"));
+        expected.add(new Org("K1\\S1"));
+        expected.add(new Org("K1\\S1\\D13"));
+        expected.add(new Org("K1\\S2"));
+        expected.add(new Org("K2"));
+        expected.add(new Org("K2\\S2"));
         assertThat(result, is(expected));
     }
 
     @Test
     public void whenGetFourNodeStringWhenSetFourNodes() {
         DeptSort deptSort = new DeptSort();
-        List<String> depts = new ArrayList<>();
-        depts.add("K1\\S2\\D11\\M23");
-        List<String> result = deptSort.appendAllNodes(depts);
+        List<Org> depts = new ArrayList<>();
+        depts.add(new Org("K1\\S2\\D11\\M23"));
+        List<Org> result = deptSort.appendAllNodes(depts);
         assertThat(result.size(), is(4));
     }
 }

@@ -10,46 +10,43 @@ import java.util.*;
  * @since 0.1
  */
 public class DeptSort {
-    private static final String SEPARATOR = "\\\\";
-    public List<String> sort(List<String> depts) {
-        Comparator<String> deptComparator = new Comparator<String>() {
+
+    public List<Org> sort(List<Org> orgs) {
+        Comparator<Org> deptComparator = new Comparator<Org>() {
             @Override
-            public int compare(String o1, String o2) {
-                String[] arr1 = o1.split(SEPARATOR);
-                String[] arr2 = o2.split(SEPARATOR);
-                int min = Math.min(arr1.length, arr2.length);
+            public int compare(Org org1, Org org2) {
+                int min = Math.min(org1.length(), org2.length());
                 int result = 0;
                 for (int i = 0; i < min; i++) {
-                    if (!arr2[i].equals(arr1[i])) {
-                        result = arr1[i].compareTo(arr2[i]);
+                    if (!org1.get(i).equals(org2.get(i))) {
+                        result = org1.get(i).compareTo(org2.get(i));
                         break;
                     }
                 }
                 if (result == 0) {
-                    result = (arr1.length - arr2.length);
+                    result = (org1.length() - org2.length());
                 }
                 return result;
             }
         };
-        depts = appendAllNodes(depts);
-        Collections.sort(depts, deptComparator);
-        return depts;
+        orgs = appendAllNodes(orgs);
+        Collections.sort(orgs, deptComparator);
+        return orgs;
     }
 
-    protected List<String> appendAllNodes(List<String> depts) {
-        Set<String> result = new HashSet<>();
-        for (String s : depts) {
-            String[] array = s.split(SEPARATOR);
+    protected List<Org> appendAllNodes(List<Org> orgs) {
+        Set<Org> result = new HashSet<>();
+        for (Org org : orgs) {
             StringBuilder path = new StringBuilder();
-            for (String dept : array) {
+            for (String s : org.getDepts()) {
                 if (path.length() != 0) {
-                    path.append("\\");
+                   path.append("\\");
                 }
-                path.append(dept);
-                result.add(path.toString());
+                path.append(s);
+                result.add(new Org(path.toString()));
             }
         }
-        List<String> list = new ArrayList<>();
+        List<Org> list = new ArrayList<>();
         list.addAll(result);
         return list;
     }
