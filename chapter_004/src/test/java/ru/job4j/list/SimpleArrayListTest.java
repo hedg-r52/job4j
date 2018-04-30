@@ -40,4 +40,18 @@ public class SimpleArrayListTest {
         list.delete();
         assertThat(list.get(1), is(1));
     }
+
+    @Test
+    public void whenDeleteByIndexFirstElement() {
+        list.delete(0);
+        assertThat(list.get(0), is(2));
+        assertThat(list.get(1), is(1));
+    }
+
+    @Test
+    public void whenDeleteByIndexAtTheMiddleOfList() {
+        list.delete(1);
+        assertThat(list.get(0), is(3));
+        assertThat(list.get(1), is(1));
+    }
 }

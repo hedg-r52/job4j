@@ -25,6 +25,27 @@ public class SimpleArrayList<E> {
         return deleting.data;
     }
 
+    public E delete(int index) {
+        if (index >= size) {
+            throw new UnsupportedOperationException();
+        }
+        Node<E> prev = this.first;
+        Node<E> result = this.first;
+        for (int i = 0;; i++) {
+            if (i == index) {
+                if (i == 0) {
+                    this.first = result.next;
+                } else {
+                    prev.next = result.next;
+                }
+                break;
+            }
+            prev = result;
+            result = result.next;
+        }
+        return result.data;
+    }
+
     public E get(int index) {
         Node<E> result = this.first;
         for (int i = 0; i < index; i++) {
