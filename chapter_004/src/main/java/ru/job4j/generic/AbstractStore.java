@@ -1,5 +1,7 @@
 package ru.job4j.generic;
 
+import java.util.Iterator;
+
 /**
  * "Абстрактное" хранилище
  *
@@ -8,21 +10,32 @@ package ru.job4j.generic;
  * @since 0.1
  */
 public abstract class AbstractStore<T extends Base> implements Store<T>  {
-    protected T[] store;
-    protected int position = 0;
+    private SimpleArray<T> store;
+    private int position = 0;
+    private static final int DEFAULT_STORE_SIZE = 10;
+
+    AbstractStore() {
+        this(DEFAULT_STORE_SIZE);
+    }
+
+    AbstractStore(int size) {
+        this.store = new SimpleArray<>(size);
+    }
 
     @Override
     public void add(T model) {
-        this.store[position++] = model;
+        this.store.add(model);
     }
 
     @Override
     public boolean replace(String id, T model) {
         boolean result = false;
-        for (int i = 0; i < position; i++) {
-            if (id.equals(this.store[i].getId())) {
+        Iterator<T> it = this.store.iterator();
+        while (it.hasNext()) {
+            T value = it.next();
+            if (id.equals(value.getId())) {
                 result = true;
-                this.store[i] = model;
+                value = model;
                 break;
             }
         }
@@ -32,15 +45,14 @@ public abstract class AbstractStore<T extends Base> implements Store<T>  {
     @Override
     public boolean delete(String id) {
         boolean result = false;
-        for (int i = 0; i < position; i++) {
-            if (result) {
-                this.store[i - 1] = this.store[i];
-            } else {
-                result = (id.equals(this.store[i].getId()));
+        Iterator<T> it = this.store.iterator();
+        for (int i = 0; it.hasNext(); i++) {
+            T value = it.next();
+            if (id.equals(value.getId())) {
+                this.store.delete(i);
+                result = true;
+                break;
             }
-        }
-        if (result) {
-            this.store[position--] = null;
         }
         return result;
     }
@@ -48,9 +60,11 @@ public abstract class AbstractStore<T extends Base> implements Store<T>  {
     @Override
     public T findById(String id) {
         T result = null;
-        for (int i = 0; i < position; i++) {
-            if (id.equals(this.store[i].getId())) {
-                result = this.store[i];
+        Iterator<T> it = this.store.iterator();
+        for (int i = 0; it.hasNext(); i++) {
+            T value = it.next();
+            if (id.equals(value.getId())) {
+                result = value;
                 break;
             }
         }

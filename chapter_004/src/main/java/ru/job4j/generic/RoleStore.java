@@ -10,7 +10,6 @@ package ru.job4j.generic;
 public class RoleStore extends AbstractStore<Role> {
 
     public RoleStore(int count) {
-        this.store = new Role[count];
-        this.position = 0;
+        super(count);
     }
 }
