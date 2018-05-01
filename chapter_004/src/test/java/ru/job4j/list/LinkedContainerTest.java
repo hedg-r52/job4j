@@ -51,4 +51,24 @@ public class LinkedContainerTest {
         lc.add("3");
         it.next();
     }
+
+    @Test
+    public void whenDeleteByIndexFirstElement() {
+        lc.add("1");
+        lc.add("2");
+        lc.add("3");
+        lc.delete(0);
+        assertThat(lc.get(0), is("2"));
+        assertThat(lc.get(1), is("3"));
+    }
+
+    @Test
+    public void whenDeleteByIndexAtTheMiddleOfList() {
+        lc.add("1");
+        lc.add("2");
+        lc.add("3");
+        lc.delete(1);
+        assertThat(lc.get(0), is("1"));
+        assertThat(lc.get(1), is("3"));
+    }
 }

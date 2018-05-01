@@ -34,17 +34,40 @@ public class LinkedContainer<E> implements Iterable<E> {
 
     public E get(int index) {
         Node<E> result = first;
-        if (index < size) {
-            for (int i = 0;; i++) {
-                if (i == index) {
-                    break;
-                }
-                result = result.next;
+        checkIndex(index);
+        for (int i = 0;; i++) {
+            if (i == index) {
+                break;
             }
-        } else {
-            throw new ArrayIndexOutOfBoundsException();
+            result = result.next;
         }
         return result.data;
+    }
+
+    public E delete(int index) {
+        Node<E> result = first;
+        Node<E> prev = first;
+        checkIndex(index);
+        for (int i = 0;; i++) {
+            if (i == index) {
+                if (i == 0) {
+                    this.first = result.next;
+                } else {
+                    prev.next = result.next;
+                }
+                this.size--;
+                break;
+            }
+            prev = result;
+            result = result.next;
+        }
+        return result.data;
+    }
+
+    private void checkIndex(int index) {
+        if (index >= size) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
     }
 
     @Override
