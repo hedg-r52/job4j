@@ -72,6 +72,10 @@ public class LinkedContainer<E> implements Iterable<E> {
         return result.data;
     }
 
+    private int getSize() {
+        return this.size;
+    }
+
     private void checkIndex(int index) {
         if (index >= size) {
             throw new ArrayIndexOutOfBoundsException();
