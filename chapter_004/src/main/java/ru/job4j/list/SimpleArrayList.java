@@ -38,6 +38,7 @@ public class SimpleArrayList<E> {
                 } else {
                     prev.next = result.next;
                 }
+                this.size--;
                 break;
             }
             prev = result;
