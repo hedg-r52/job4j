@@ -32,6 +32,14 @@ public class LinkedContainer<E> implements Iterable<E> {
         this.modCount++;
     }
 
+    public void addFirst(E value) {
+        Node<E> newNode = new Node<>(value);
+        newNode.next = this.first;
+        this.first = newNode;
+        this.size++;
+
+    }
+
     public E get(int index) {
         Node<E> result = first;
         checkIndex(index);

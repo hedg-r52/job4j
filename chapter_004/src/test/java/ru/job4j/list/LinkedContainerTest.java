@@ -71,4 +71,14 @@ public class LinkedContainerTest {
         assertThat(lc.get(0), is("1"));
         assertThat(lc.get(1), is("3"));
     }
+
+    @Test
+    public void whenAddFirstItemThenFirstItemNew() {
+        lc.add("1");
+        lc.add("2");
+        lc.addFirst("3");
+        assertThat(lc.get(0), is("3"));
+        assertThat(lc.get(1), is("1"));
+        assertThat(lc.get(2), is("2"));
+    }
 }
