@@ -72,10 +72,13 @@ public class LinkedContainer<E> implements Iterable<E> {
         return result.data;
     }
 
+<<<<<<< HEAD
     private int getSize() {
         return this.size;
     }
 
+=======
+>>>>>>> cfa6ff5... 5.3.2. Создать контейнер на базе связанного списка. Добавлен метод delete(int index)
     private void checkIndex(int index) {
         if (index >= size) {
             throw new ArrayIndexOutOfBoundsException();
