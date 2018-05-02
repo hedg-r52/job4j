@@ -85,11 +85,11 @@ public class LinkedContainer<E> implements Iterable<E> {
     public boolean contains(E value) {
         boolean result = false;
         Iterator<E> it = iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             if (value.equals(it.next())) {
                 result = true;
                 break;
-            };
+            }
         }
         return result;
     }

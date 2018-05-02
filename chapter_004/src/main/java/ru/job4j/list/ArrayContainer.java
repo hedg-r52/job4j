@@ -37,7 +37,7 @@ public class ArrayContainer<E> implements Iterable<E> {
 
     public boolean contains(E value) {
         boolean result = false;
-        for(int i = 0; i < position; i++) {
+        for (int i = 0; i < position; i++) {
             if (value.equals(this.container[i])) {
                 result = false;
                 break;
