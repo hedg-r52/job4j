@@ -1,6 +1,7 @@
 package ru.job4j.map;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 /**
  * Пользователь
@@ -30,5 +31,13 @@ public class User {
 
     public Calendar getBirthday() {
         return this.birthday;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 13;
+        result = 31 * result + this.name.hashCode();
+        result = 31 * result + this.birthday.hashCode();
+        return result;
     }
 }
