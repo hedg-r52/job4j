@@ -20,24 +20,17 @@ public class Node<T> {
         this.value = value;
     }
 
-    public boolean hasCycle() {
+    public static boolean hasCycle(Node first) {
         boolean result = false;
-        Node current = this;
-        this.storage = new SimpleArray<>(10);
-        while (current.next != null) {
-            Iterator<Node<T>> it = storage.iterator();
-            while (it.hasNext()) {
-                Node<T> next = it.next();
-                if (current.equals(next)) {
-                    result = true;
-                    break;
-                }
-            }
-            if (result) {
+        Node slow = first;
+        Node fast = first;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                result = true;
                 break;
             }
-            this.storage.add(current);
-            current = current.next;
         }
         return result;
     }
