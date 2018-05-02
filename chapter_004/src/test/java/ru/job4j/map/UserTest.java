@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class UserTest {
 
     @Test
-    public void overrideHashCode() {
+    public void overrideEquals() {
         User first = new User("User", 0, new GregorianCalendar(1980, 1, 1));
         User second = new User("User", 0, new GregorianCalendar(1980, 1, 1));
         Map<User, Object> map = new HashMap<>();
