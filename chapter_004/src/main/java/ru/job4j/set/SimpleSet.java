@@ -25,15 +25,7 @@ public class SimpleSet<T> implements Iterable<T> {
     }
 
     public void add(T value) {
-        boolean isExist = false;
-        Iterator<T> it = list.iterator();
-        while (it.hasNext()) {
-            if (value.equals(it.next())) {
-                isExist = true;
-                break;
-            }
-        }
-        if (!isExist) {
+        if (!list.contains(value)) {
             list.add(value);
         }
     }
