@@ -35,6 +35,25 @@ public class Tree<E extends Comparable<E>> implements SimpleTree<E> {
         return findFact(this.root, value);
     }
 
+    public boolean isBinary() {
+        return isBinaryFact(this.root);
+    }
+
+    private boolean isBinaryFact(Node<E> branch) {
+        boolean result = true;
+        if (branch.leaves().size() > 2) {
+            result = false;
+        } else {
+            for (Node<E> child : branch.leaves()) {
+                result = isBinaryFact(child);
+                if (!result) {
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     private Node<E> findFact(Node<E> branch, E value) {
         Node<E> result = null;
         if (branch.eqValue((value))) {
