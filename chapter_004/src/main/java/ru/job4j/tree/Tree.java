@@ -1,8 +1,6 @@
 package ru.job4j.tree;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Дерево
@@ -72,15 +70,48 @@ public class Tree<E extends Comparable<E>> implements SimpleTree<E> {
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
+            Node<E> current = null;
+            int iter = 0;
+            Stack<Node<E>> nodeStack = new Stack<>();
+            Stack<Integer> countStack = new Stack<>();
+
 
             @Override
             public boolean hasNext() {
-                return false;
-            }
+                return current == null || !nodeStack.empty();
+           }
 
             @Override
             public E next() {
-                return null;
+                if (current == null) {
+                    current = root;
+                    while (current.leaves().size() > 0) {
+                        nodeStack.push(current);
+                        countStack.push(0);
+                        current = current.leaves().get(0);
+                    }
+                } else {
+                    if (nodeStack.size() == 0) {
+                        throw new NoSuchElementException();
+                    } else {
+                        iter = countStack.pop();
+                        iter++;
+                        if (iter < nodeStack.peek().leaves().size()) {
+                            current = nodeStack.peek().leaves().get(iter);
+                            countStack.push(iter);
+                            while (current.leaves().size() > 0) {
+                                nodeStack.push(current);
+                                countStack.push(iter);
+                                iter = 0;
+                                current = current.leaves().get(iter);
+                                countStack.push(iter);
+                            }
+                        } else {
+                            current = nodeStack.pop();
+                        }
+                    }
+                }
+                return current.getValue();
             }
         };
     }
