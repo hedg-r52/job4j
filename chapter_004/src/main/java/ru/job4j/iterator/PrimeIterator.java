@@ -21,7 +21,6 @@ public class PrimeIterator implements Iterator<Integer> {
 
     @Override
     public boolean hasNext() {
-        boolean result = true;
         int i = count;
         while ((i < ints.length) && (!isSimpleNumber(ints[i]))) {
             i++;
