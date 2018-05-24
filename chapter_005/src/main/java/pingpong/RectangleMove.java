@@ -15,7 +15,7 @@ public class RectangleMove implements Runnable {
     private int deltaY;
     private int limitX;
     private int limitY;
-
+    private boolean isInterrupted = false;
 
     public RectangleMove(Rectangle rect, int limitX, int limitY) {
         this.rect = rect;
@@ -27,9 +27,9 @@ public class RectangleMove implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            setCoordX();
-            setCoordY();
+        while (!isInterrupted) {
+            coordinateX();
+            coordinateY();
             try {
                 Thread.sleep(30);
             } catch (InterruptedException e) {
@@ -38,7 +38,11 @@ public class RectangleMove implements Runnable {
         }
     }
 
-    private void setCoordX() {
+    public void setInterrupted(boolean interrupted) {
+        isInterrupted = interrupted;
+    }
+
+    private void coordinateX() {
         double newX = this.rect.getX() + deltaX;
         if (newX + this.rect.getWidth() > limitX || newX < 0) {
             deltaX = -deltaX;
@@ -46,7 +50,7 @@ public class RectangleMove implements Runnable {
         this.rect.setX(this.rect.getX() + deltaX);
     }
 
-    private void setCoordY() {
+    private void coordinateY() {
         double newY = this.rect.getY() + deltaY;
         if (newY + this.rect.getHeight() > limitY || newY < 0) {
             deltaY = -deltaY;
