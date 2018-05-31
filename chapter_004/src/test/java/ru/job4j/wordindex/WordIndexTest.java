@@ -52,6 +52,46 @@ public class WordIndexTest {
 
     @Test
     public void whenLoadWordsFromFile() {
+        final String str = "test  text text test test ";
+        WordIndex indexTrie = getWordIndexFromFile(str);
+        StringBuilder expected = new StringBuilder();
+        expected.append("test { 0 16 21 }");
+        expected.append(System.lineSeparator());
+        expected.append("text { 6 11 }");
+        expected.append(System.lineSeparator());
+        assertThat(indexTrie.toString(), is(expected.toString()));
+    }
+
+    @Test
+    public void whenCompareWordsWithStringIndexOf() {
+        final String str = "test  text text test test ";
+        WordIndex indexTrie = getWordIndexFromFile(str);
+        StringBuilder expected = new StringBuilder();
+        expected.append(stringIndexesForWord(str, "test"));
+        expected.append(System.lineSeparator());
+        expected.append(stringIndexesForWord(str, "text"));
+        expected.append(System.lineSeparator());
+        assertThat(indexTrie.toString(), is(expected.toString()));
+    }
+
+    private String stringIndexesForWord(String str, String word) {
+        StringBuilder result = new StringBuilder();
+        int count = 0;
+        result.append(String.format("%s {", word));
+        while (count < str.length()) {
+            int searchIndex = str.indexOf(word, count);
+            if (searchIndex != -1) {
+                result.append(String.format(" %s", searchIndex));
+                count = searchIndex + 1;
+            } else {
+                break;
+            }
+        }
+        result.append(" }");
+        return result.toString();
+    }
+
+    private WordIndex getWordIndexFromFile(String str) {
         final String fileName = "test";
         final String fileExtention = ".tmp";
         WordIndex indexTrie = new WordIndex();
@@ -59,19 +99,14 @@ public class WordIndexTest {
             File temp = File.createTempFile(fileName, fileExtention);
             FileWriter fw = new FileWriter(temp);
             try (BufferedWriter bw = new BufferedWriter(fw)) {
-                bw.write("test  text text test test ");
+                bw.write(str);
             }
             indexTrie.loadFile(temp.toString());
             temp.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        StringBuilder expected = new StringBuilder();
-        expected.append("test { 0 16 21 }");
-        expected.append(System.lineSeparator());
-        expected.append("text { 6 11 }");
-        expected.append(System.lineSeparator());
-        assertThat(indexTrie.toString(), is(expected.toString()));
+        return indexTrie;
     }
 
 }
