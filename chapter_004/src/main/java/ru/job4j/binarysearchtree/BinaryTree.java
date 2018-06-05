@@ -1,7 +1,6 @@
 package ru.job4j.binarysearchtree;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,39 +23,39 @@ public class BinaryTree<E extends Comparable<E>> {
         if (this.root == null) {
             this.root = newNode;
         } else {
-            addFactorial(this.root, newNode);
+            addRecursive(this.root, newNode);
         }
     }
 
-    private void addFactorial(Node<E> apex, Node<E> newNode) {
+    private void addRecursive(Node<E> apex, Node<E> newNode) {
         if (newNode.data.compareTo(apex.data) > 0) {
             if (apex.right == null) {
                 apex.right = newNode;
             } else {
-                addFactorial(apex.right, newNode);
+                addRecursive(apex.right, newNode);
             }
         } else {
             if (apex.left == null) {
                 apex.left = newNode;
             } else {
-                addFactorial(apex.left, newNode);
+                addRecursive(apex.left, newNode);
             }
         }
     }
 
     public List<E> asList() {
         List<E> result = new ArrayList<>();
-        asListFactorial(this.root, result);
+        asListRecursive(this.root, result);
         return result;
     }
 
-    private void asListFactorial(Node<E> apex, List<E> list) {
+    private void asListRecursive(Node<E> apex, List<E> list) {
         if (apex.left != null) {
-            asListFactorial(apex.left, list);
+            asListRecursive(apex.left, list);
         }
         list.add(apex.data);
         if (apex.right != null) {
-            asListFactorial(apex.right, list);
+            asListRecursive(apex.right, list);
         }
     }
 
