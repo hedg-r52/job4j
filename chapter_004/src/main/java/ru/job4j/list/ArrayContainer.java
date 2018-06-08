@@ -1,5 +1,8 @@
 package ru.job4j.list;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -10,7 +13,9 @@ import java.util.Iterator;
  * @version $Id$
  * @since 0.1
  */
+@ThreadSafe
 public class ArrayContainer<E> implements Iterable<E> {
+    @GuardedBy("this")
     private Object[] container;
     private final static int DEFAULT_CONTAINER_SIZE = 10;
     private int position;
@@ -24,18 +29,18 @@ public class ArrayContainer<E> implements Iterable<E> {
         position = 0;
     }
 
-    public void add(E value) {
+    public synchronized void add(E value) {
         if (position >= this.container.length) {
             growContainerSize();
         }
         this.container[position++] = value;
     }
 
-    public E get(int index) {
+    public synchronized E get(int index) {
         return (E) this.container[index];
     }
 
-    public boolean contains(E value) {
+    public synchronized boolean contains(E value) {
         boolean result = false;
         for (int i = 0; i < position; i++) {
             if (value.equals(this.container[i])) {
@@ -57,13 +62,13 @@ public class ArrayContainer<E> implements Iterable<E> {
             }
 
             @Override
-            public E next() {
+            public synchronized E next() {
                 return (E) container[index++];
             }
         };
     }
 
-    private void growContainerSize() {
+    private synchronized void growContainerSize() {
         this.container = Arrays.copyOf(this.container, this.container.length * 2);
     }
 }

@@ -1,5 +1,8 @@
 package ru.job4j.list;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
@@ -13,14 +16,14 @@ import java.util.Iterator;
 public class LinkedContainer<E> implements Iterable<E> {
     private int size;
     private int modCount = 0;
-    Node<E> first;
-    Node<E> last;
+    private Node<E> first;
+    private Node<E> last;
 
     public LinkedContainer() {
         this.size = 0;
     }
 
-    public void add(E value) {
+    public synchronized void add(E value) {
         Node<E> newNode = new Node<>(value);
         if (size == 0) {
             this.first = newNode;
@@ -32,7 +35,7 @@ public class LinkedContainer<E> implements Iterable<E> {
         this.modCount++;
     }
 
-    public void addFirst(E value) {
+    public synchronized void addFirst(E value) {
         Node<E> newNode = new Node<>(value);
         newNode.next = this.first;
         this.first = newNode;
@@ -40,7 +43,7 @@ public class LinkedContainer<E> implements Iterable<E> {
 
     }
 
-    public E get(int index) {
+    public synchronized E get(int index) {
         Node<E> result = first;
         checkIndex(index);
         for (int i = 0;; i++) {
@@ -52,7 +55,7 @@ public class LinkedContainer<E> implements Iterable<E> {
         return result.data;
     }
 
-    public E delete(int index) {
+    public synchronized E delete(int index) {
         Node<E> result = first;
         Node<E> prev = first;
         checkIndex(index);
@@ -121,8 +124,11 @@ public class LinkedContainer<E> implements Iterable<E> {
         };
     }
 
+    @ThreadSafe
     private static class Node<E> {
+        @GuardedBy("this")
         E data;
+        @GuardedBy("this")
         Node<E> next;
 
         Node(E data) {
