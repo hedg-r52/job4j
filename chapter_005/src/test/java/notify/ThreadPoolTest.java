@@ -33,6 +33,11 @@ public class ThreadPoolTest {
         for (int i = 0; i < 10; i++) {
             pool.work(r);
         }
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         pool.shutdown();
         assertThat(result, is(10));
     }
