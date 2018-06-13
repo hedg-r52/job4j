@@ -1,5 +1,8 @@
 package sync;
 
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import java.util.HashMap;
 
 /**
@@ -9,9 +12,10 @@ import java.util.HashMap;
  * @version $Id$
  * @since 0.1
  */
+@ThreadSafe
 public class UserStorage {
-
-    private HashMap<Integer, User> users;
+    @GuardedBy("this")
+    private final HashMap<Integer, User> users;
 
     public UserStorage() {
         this.users = new HashMap<>();
@@ -19,45 +23,57 @@ public class UserStorage {
 
     public boolean add(User user) {
         boolean result = false;
-        if (!this.users.containsKey(user.getId())) {
-            this.users.put(user.getId(), user);
-            result = true;
+        synchronized (this) {
+            if (!this.users.containsKey(user.getId())) {
+                this.users.put(user.getId(), user);
+                result = true;
+            }
         }
         return result;
     }
 
     public boolean update(User user) {
         boolean result = false;
-        if (this.users.containsKey(user.getId())) {
-            this.users.put(user.getId(), user);
-            result = true;
+        synchronized (this) {
+            if (this.users.containsKey(user.getId())) {
+                this.users.put(user.getId(), user);
+                result = true;
+            }
         }
         return result;
     }
 
     protected boolean isUserExist(int id) {
-        return this.users.containsKey(id);
+        synchronized (this) {
+            return this.users.containsKey(id);
+        }
     }
 
     public boolean delete(User user) {
         boolean result = false;
-        if (this.users.containsKey(user.getId())) {
-            this.users.remove(user.getId());
-            result = true;
+        synchronized (this) {
+            if (this.users.containsKey(user.getId())) {
+                this.users.remove(user.getId());
+                result = true;
+            }
         }
         return result;
     }
 
     protected int getUserAmount(int index) {
-        return this.users.get(index).getAmount();
+        synchronized (this) {
+            return this.users.get(index).getAmount();
+        }
     }
 
     public void transfer(int fromId, int toId, int amount) {
-        User userFrom = this.users.get(fromId);
-        User userTo = this.users.get(toId);
-        if (userFrom.getAmount() > amount) {
-            userFrom.setAmount(userFrom.getAmount() - amount);
-            userTo.setAmount(userTo.getAmount() + amount);
+        synchronized (this) {
+            User userFrom = this.users.get(fromId);
+            User userTo = this.users.get(toId);
+            if (userFrom.getAmount() > amount) {
+                userFrom.setAmount(userFrom.getAmount() - amount);
+                userTo.setAmount(userTo.getAmount() + amount);
+            }
         }
     }
 
