@@ -15,9 +15,11 @@ import java.util.Iterator;
  */
 @ThreadSafe
 public class ArrayContainer<E> implements Iterable<E> {
-    @GuardedBy("this")
+    private final Object lock = new Object();
+    @GuardedBy("lock")
     private Object[] container;
     private final static int DEFAULT_CONTAINER_SIZE = 10;
+    @GuardedBy("lock")
     private int position;
 
     public ArrayContainer() {
@@ -29,23 +31,29 @@ public class ArrayContainer<E> implements Iterable<E> {
         position = 0;
     }
 
-    public synchronized void add(E value) {
-        if (position >= this.container.length) {
-            growContainerSize();
+    public void add(E value) {
+        synchronized (lock) {
+            if (position >= this.container.length) {
+                growContainerSize();
+            }
+            this.container[position++] = value;
         }
-        this.container[position++] = value;
     }
 
-    public synchronized E get(int index) {
-        return (E) this.container[index];
+    public E get(int index) {
+        synchronized (lock) {
+            return (E) this.container[index];
+        }
     }
 
-    public synchronized boolean contains(E value) {
+    public boolean contains(E value) {
         boolean result = false;
-        for (int i = 0; i < position; i++) {
-            if (value.equals(this.container[i])) {
-                result = true;
-                break;
+        synchronized (lock) {
+            for (int i = 0; i < position; i++) {
+                if (value.equals(this.container[i])) {
+                    result = true;
+                    break;
+                }
             }
         }
         return result;
@@ -58,17 +66,23 @@ public class ArrayContainer<E> implements Iterable<E> {
 
             @Override
             public boolean hasNext() {
-                return (index < position);
+                synchronized (lock) {
+                    return (index < position);
+                }
             }
 
             @Override
-            public synchronized E next() {
-                return (E) container[index++];
+            public E next() {
+                synchronized (lock) {
+                    return (E) container[index++];
+                }
             }
         };
     }
 
-    private synchronized void growContainerSize() {
-        this.container = Arrays.copyOf(this.container, this.container.length * 2);
+    private void growContainerSize() {
+        synchronized (lock) {
+            this.container = Arrays.copyOf(this.container, this.container.length * 2);
+        }
     }
 }
