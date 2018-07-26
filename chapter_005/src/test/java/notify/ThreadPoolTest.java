@@ -7,23 +7,16 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-@ThreadSafe
 public class ThreadPoolTest {
-    private final Object lock = new Object();
-    @GuardedBy("lock")
     private int result = 0;
 
-    @GuardedBy("lock")
     private void increment() {
-        synchronized (lock) {
-            result++;
-        }
+        result++;
     }
 
     @Test
     public void whenAdd() {
         ThreadPool pool = new ThreadPool();
-        pool.run();
         Runnable r = new Runnable() {
             @Override
             public void run() {

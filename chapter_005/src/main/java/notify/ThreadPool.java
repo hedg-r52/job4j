@@ -17,37 +17,19 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @ThreadSafe
 public class ThreadPool {
-    private final List<Thread> threads = new LinkedList<>();
     private final Queue<Runnable> tasks = new LinkedBlockingQueue<>();
     private static final int SIZE = Runtime.getRuntime().availableProcessors();
-    private Object lock = new Object();
 
-    @GuardedBy("lock")
-    public synchronized void run() {
+    public ThreadPool() {
         for (int i = 0; i < SIZE; i++) {
-            Thread thread = new Thread(() -> {
-                synchronized (lock) {
-                    while (!Thread.currentThread().isInterrupted()) {
-                        while (tasks.size() == 0) {
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        tasks.poll().run();
-                    }
-                }
-            });
-            thread.start();
+            new MyThread().start();
         }
     }
 
-    @GuardedBy("lock")
     public void work(Runnable job) {
-        synchronized (lock) {
+        synchronized (tasks) {
             this.tasks.offer(job);
-            lock.notifyAll();
+            this.tasks.notifyAll();
         }
     }
 
@@ -60,6 +42,30 @@ public class ThreadPool {
         };
         for (int i = 0; i < SIZE; i++) {
             this.tasks.offer(stop);
+        }
+    }
+
+    class MyThread extends Thread {
+        @Override
+        public void run() {
+            Runnable r;
+            while (!this.isInterrupted()) {
+                synchronized (tasks) {
+                    while (tasks.isEmpty()) {
+                        try {
+                            tasks.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    r = (Runnable) tasks.poll();
+                }
+                try {
+                    r.run();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
