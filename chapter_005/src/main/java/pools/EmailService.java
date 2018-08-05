@@ -5,15 +5,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class EmailService {
-    private final List<User> notificationList;
     private final ExecutorService pool = Executors.newFixedThreadPool(
             Runtime.getRuntime().availableProcessors()
     );
     private final EmailNotification emailNotification = new EmailNotification();
-
-    public EmailService(List<User> notificationList) {
-        this.notificationList = notificationList;
-    }
 
     private class Sender implements Runnable {
         private final User user;
@@ -28,10 +23,11 @@ public class EmailService {
         }
     }
 
-    public void init() {
-        for (User user : this.notificationList) {
-            this.pool.submit(new Sender(user));
-        }
+    public void send(User user) {
+        this.pool.submit(new Sender(user));
+    }
+
+    public void stop() {
         this.pool.shutdown();
         while (!pool.isTerminated()) {
             try {

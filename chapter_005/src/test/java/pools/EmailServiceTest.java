@@ -1,5 +1,6 @@
 package pools;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -28,10 +29,18 @@ public class EmailServiceTest {
                     new User("Philipp", "Philipp@mail.no")
             )
     );
-    private EmailService service = new EmailService(users);
+    private EmailService service;
+
+    @Before
+    public void setUp() {
+        service = new EmailService();
+    }
 
     @Test
     public void whenInit() {
-        service.init();
+        for (User user: users) {
+            service.send(user);
+        }
+        service.stop();
     }
 }
