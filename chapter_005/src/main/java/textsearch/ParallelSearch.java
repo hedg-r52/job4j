@@ -10,10 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 @ThreadSafe
 public class ParallelSearch {
@@ -27,7 +24,7 @@ public class ParallelSearch {
     private final Queue<String> files = new LinkedList<>();
 
     @GuardedBy("this")
-    private final List<String> paths = new ArrayList<>();
+    private final Set<String> paths = new LinkedHashSet<>();
 
     class SearchThread extends Thread {
         @Override
@@ -49,22 +46,23 @@ public class ParallelSearch {
         @Override
         public void run() {
             while (true) {
+                String file = "";
                 synchronized ("this") {
-                    String file = files.poll();
-                    if (file == null && finish) {
-                        break;
-                    }
-                    if (file != null) {
-                        String s;
-                        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                            while ((s = reader.readLine()) != null) {
-                                if (s.contains(text)) {
-                                    paths.add(file);
-                                }
+                    file = files.poll();
+                }
+                if (file == null && finish) {
+                    break;
+                }
+                if (file != null) {
+                    String s;
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        while ((s = reader.readLine()) != null) {
+                            if (s.contains(text)) {
+                                paths.add(file);
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -100,7 +98,7 @@ public class ParallelSearch {
         }
     }
 
-    synchronized List<String> result() {
+    synchronized Set<String> result() {
         return this.paths;
     }
 }

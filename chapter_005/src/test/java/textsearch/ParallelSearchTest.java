@@ -6,9 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -19,7 +17,7 @@ public class ParallelSearchTest {
     private final List<String> dirs = new ArrayList<>(
             Arrays.asList("d\\d1\\d1_1", "d\\d1\\d1_2", "d\\d2\\d2_1", "d\\d2\\d2_2")
             );
-    private final List<String> allValues = new ArrayList<>(
+    private final Set<String> allValues = new LinkedHashSet<>(
             Arrays.asList(
                     String.format("%s%s", root, "d\\d1\\d1_1\\file.lst"),
                     String.format("%s%s", root, "d\\d1\\d1_1\\file.txt"),
@@ -31,7 +29,7 @@ public class ParallelSearchTest {
                     String.format("%s%s", root, "d\\d2\\d2_2\\file.txt")
             )
     );
-    private final List<String> pieValues = new ArrayList<>(
+    private final Set<String> pieValues = new LinkedHashSet<>(
             Arrays.asList(
                     String.format("%s%s", root, "d\\d1\\d1_1\\file.lst"),
                     String.format("%s%s", root, "d\\d1\\d1_2\\file.lst"),
@@ -78,13 +76,13 @@ public class ParallelSearchTest {
     public void whenTextFrogSearchingThenGetAllValues() {
        ParallelSearch ps = new ParallelSearch(root, "frog", Arrays.asList("txt", "lst"));
        ps.init();
-       assertThat(ps.result(), is(allValues));
+       assertThat(ps.result().equals(allValues), is(true));
     }
 
     @Test
     public void whenTextPieSearchingThenGetOnlyLstFiles() {
         ParallelSearch ps = new ParallelSearch(root, "pie", Arrays.asList("txt", "lst"));
         ps.init();
-        assertThat(ps.result(), is(pieValues));
+        assertThat(ps.result().equals(pieValues), is(true));
     }
 }
