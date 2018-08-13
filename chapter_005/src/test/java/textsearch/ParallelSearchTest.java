@@ -15,28 +15,28 @@ import static org.junit.Assert.*;
 
 public class ParallelSearchTest {
 
-    private String root = "C:\\TMP\\";
+    private String root = System.getProperty("java.io.tmpdir");
     private final List<String> dirs = new ArrayList<>(
             Arrays.asList("d\\d1\\d1_1", "d\\d1\\d1_2", "d\\d2\\d2_1", "d\\d2\\d2_2")
             );
     private final List<String> allValues = new ArrayList<>(
             Arrays.asList(
-                    "C:\\TMP\\d\\d1\\d1_1\\file.lst",
-                    "C:\\TMP\\d\\d1\\d1_1\\file.txt",
-                    "C:\\TMP\\d\\d1\\d1_2\\file.lst",
-                    "C:\\TMP\\d\\d1\\d1_2\\file.txt",
-                    "C:\\TMP\\d\\d2\\d2_1\\file.lst",
-                    "C:\\TMP\\d\\d2\\d2_1\\file.txt",
-                    "C:\\TMP\\d\\d2\\d2_2\\file.lst",
-                    "C:\\TMP\\d\\d2\\d2_2\\file.txt"
+                    String.format("%s%s", root, "d\\d1\\d1_1\\file.lst"),
+                    String.format("%s%s", root, "d\\d1\\d1_1\\file.txt"),
+                    String.format("%s%s", root, "d\\d1\\d1_2\\file.lst"),
+                    String.format("%s%s", root, "d\\d1\\d1_2\\file.txt"),
+                    String.format("%s%s", root, "d\\d2\\d2_1\\file.lst"),
+                    String.format("%s%s", root, "d\\d2\\d2_1\\file.txt"),
+                    String.format("%s%s", root, "d\\d2\\d2_2\\file.lst"),
+                    String.format("%s%s", root, "d\\d2\\d2_2\\file.txt")
             )
     );
     private final List<String> pieValues = new ArrayList<>(
             Arrays.asList(
-                    "C:\\TMP\\d\\d1\\d1_1\\file.lst",
-                    "C:\\TMP\\d\\d1\\d1_2\\file.lst",
-                    "C:\\TMP\\d\\d2\\d2_1\\file.lst",
-                    "C:\\TMP\\d\\d2\\d2_2\\file.lst"
+                    String.format("%s%s", root, "d\\d1\\d1_1\\file.lst"),
+                    String.format("%s%s", root, "d\\d1\\d1_2\\file.lst"),
+                    String.format("%s%s", root, "d\\d2\\d2_1\\file.lst"),
+                    String.format("%s%s", root, "d\\d2\\d2_2\\file.lst")
             )
     );
 
