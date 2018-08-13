@@ -2,8 +2,14 @@ package textsearch;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.io.FilenameUtils;
 
-import java.nio.file.FileVisitor;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,7 +19,7 @@ import java.util.Queue;
 public class ParallelSearch {
     private final String root;
     private final String text;
-    private final List<String> exts;
+    private final List<String> extensions;
 
     private volatile boolean finish = false;
 
@@ -23,33 +29,78 @@ public class ParallelSearch {
     @GuardedBy("this")
     private final List<String> paths = new ArrayList<>();
 
-    public ParallelSearch(String root, String text, List<String> exts) {
-        this.root = root;
-        this.text = text;
-        this.exts = exts;
+    class SearchThread extends Thread {
+        @Override
+        public void run() {
+            Path rootPath = Paths.get(root);
+            try {
+                Files.walk(rootPath)
+                        .filter(p -> !Files.isDirectory(p)
+                                && extensions.contains(FilenameUtils.getExtension(p.toString())))
+                        .forEach(p -> files.offer(p.toString()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            finish = true;
+        }
     }
 
-    public void init() {
-        Thread search = new Thread() {
-            @Override
-            public void run() {
-                //FileVisitor
-            }
-        };
-        Thread read = new Thread() {
-            @Override
-            public void run() {
-                while(!finish) {
+    class ReadThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                synchronized ("this") {
                     String file = files.poll();
+                    if (file == null && finish) {
+                        break;
+                    }
                     if (file != null) {
-
+                        String s;
+                        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                            while ((s = reader.readLine()) != null) {
+                                if (s.contains(text)) {
+                                    paths.add(file);
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
-        };
+        }
     }
 
-//    synchronized Queue<String> result() {
-//        return this.paths;
-//    }
+
+    public ParallelSearch(String root, String text, List<String> extensions) {
+        this.root = root;
+        this.text = text;
+        this.extensions = extensions;
+    }
+
+    public void init() {
+        Thread search = new SearchThread();
+        Thread read1 = new ReadThread();
+        Thread read2 = new ReadThread();
+        search.start();
+        read1.start();
+        read2.start();
+        while (!finish) {
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            read1.join();
+            read2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    synchronized List<String> result() {
+        return this.paths;
+    }
 }
