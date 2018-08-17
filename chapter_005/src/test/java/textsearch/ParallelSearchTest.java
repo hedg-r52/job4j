@@ -3,6 +3,7 @@ package textsearch;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -72,19 +73,20 @@ public class ParallelSearchTest {
 
     }
 
-    @Test
+
+    @Test @Ignore
     public void whenTextFrogSearchingThenGetAllValues() {
         // Commented for Travis CI(can't create windows-like path)
-//       ParallelSearch ps = new ParallelSearch(root, "frog", Arrays.asList("txt", "lst"));
-//       ps.init();
-//       assertThat(ps.result().equals(allValues), is(true));
+        ParallelSearch ps = new ParallelSearch(root, "frog", Arrays.asList("txt", "lst"));
+        ps.init();
+        assertThat(ps.result().equals(allValues), is(true));
     }
 
-    @Test
+    @Test @Ignore
     public void whenTextPieSearchingThenGetOnlyLstFiles() {
         // Commented for Travis CI(can't create windows-like path)
-//        ParallelSearch ps = new ParallelSearch(root, "pie", Arrays.asList("txt", "lst"));
-//        ps.init();
-//        assertThat(ps.result().equals(pieValues), is(true));
+        ParallelSearch ps = new ParallelSearch(root, "pie", Arrays.asList("txt", "lst"));
+        ps.init();
+        assertThat(ps.result().equals(pieValues), is(true));
     }
 }
