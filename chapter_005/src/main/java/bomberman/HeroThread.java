@@ -5,6 +5,7 @@ import bomberman.directions.DirectionHelper;
 
 public class HeroThread extends Thread {
     private static final int PAUSE = 1000;
+    private static final int COUNT_THRESHOLD = 15;
     private final Board board;
     private Hero hero;
     private final Direction startDirection;
@@ -22,6 +23,7 @@ public class HeroThread extends Thread {
     @Override
     public void run() {
         Direction direction = startDirection;
+        int count = 0;
         try {
             this.board.init(hero.getPosition());
         } catch (InterruptedException e) {
@@ -49,6 +51,10 @@ public class HeroThread extends Thread {
                 Thread.sleep(PAUSE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+            count++;
+            if (count > COUNT_THRESHOLD) {
+                break;
             }
         }
     }
