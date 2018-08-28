@@ -87,4 +87,8 @@ public class SimpleBlockingQueue<T> {
             return result;
         }
     }
+
+    public boolean isEmpty() {
+        return this.queue.isEmpty();
+    }
 }
