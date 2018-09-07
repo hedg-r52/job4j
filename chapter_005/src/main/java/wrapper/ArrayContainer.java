@@ -1,10 +1,12 @@
-package ru.job4j.list;
+package wrapper;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Контейнер на массиве
@@ -14,7 +16,7 @@ import java.util.Iterator;
  * @since 0.1
  */
 @ThreadSafe
-public class ArrayContainer<E> implements Iterable<E> {
+public class ArrayContainer<E> extends Container<E> {
     private final Object lock = new Object();
     @GuardedBy("lock")
     protected Object[] container;
@@ -79,6 +81,13 @@ public class ArrayContainer<E> implements Iterable<E> {
             }
         };
     }
+
+    @Override
+    protected  Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+
 
     private void growContainerSize() {
         synchronized (lock) {
