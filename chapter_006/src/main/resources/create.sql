@@ -62,7 +62,7 @@ create table comments
 	item_id integer references item(id)
 );
 
--- Insert data
+-- Insert vacancy
 
 -- state
 INSERT INTO state VALUES ( 1, 'state1' );
