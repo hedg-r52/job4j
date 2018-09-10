@@ -44,16 +44,22 @@ public class Tracker implements AutoCloseable {
      * @param item новая заявка
      * @return ссылка на созданную заявку
      */
-    public Item add(Item item) throws SQLException {
-        PreparedStatement st = connection.prepareStatement("insert into items(name, \"desc\", created) values (?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
-        st.setString(1, item.getName());
-        st.setString(2, item.getDesc());
-        st.setLong(3, item.getCreated());
-        int id = st.executeUpdate();
-        ResultSet rs = st.getGeneratedKeys();
-        rs.next();
-        item.setId(rs.getInt(1));
-        return item;
+    public Item add(Item item) {
+        Item result = null;
+        try (PreparedStatement st = connection.prepareStatement("insert into items(name, \"desc\", created) values (?, ?, ?);", Statement.RETURN_GENERATED_KEYS)) {
+            st.setString(1, item.getName());
+            st.setString(2, item.getDesc());
+            st.setLong(3, item.getCreated());
+            int id = st.executeUpdate();
+            try (ResultSet rs = st.getGeneratedKeys()) {
+                rs.next();
+                item.setId(rs.getInt(1));
+                result = item;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -62,15 +68,17 @@ public class Tracker implements AutoCloseable {
      * @param id      Уникальный ключ заявки
      * @param newItem новая заявка
      */
-    public void replace(int id, Item newItem) throws SQLException {
-        PreparedStatement st = connection.prepareStatement("update items set name=?, \"desc\"=?, created=? where id=?;");
-        st.setString(1, newItem.getName());
-        st.setString(2, newItem.getDesc());
-        st.setLong(3, newItem.getCreated());
-        st.setInt(4, id);
-        st.executeUpdate();
+    public void replace(int id, Item newItem) {
+        try (PreparedStatement st = connection.prepareStatement("update items set name=?, \"desc\"=?, created=? where id=?;")) {
+            st.setString(1, newItem.getName());
+            st.setString(2, newItem.getDesc());
+            st.setLong(3, newItem.getCreated());
+            st.setInt(4, id);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
-
 
 
     /**
@@ -78,10 +86,13 @@ public class Tracker implements AutoCloseable {
      *
      * @param id Уникальный ключ заявки
      */
-    public void delete(int id) throws SQLException {
-        PreparedStatement st = connection.prepareStatement("delete from items where id = ?");
-        st.setInt(1, id);
-        int result = st.executeUpdate();
+    public void delete(int id) {
+        try (PreparedStatement st = connection.prepareStatement("delete from items where id = ?")) {
+            st.setInt(1, id);
+            int result = st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -89,19 +100,21 @@ public class Tracker implements AutoCloseable {
      *
      * @return массив заявок
      */
-    public List<Item> findAll() throws SQLException {
+    public List<Item> findAll() {
         List<Item> result = new ArrayList<>();
-        Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery("select * from items;");
-        while (rs.next()) {
-            result.add(
-                    new Item(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getString("desc"),
-                            rs.getLong("created")
-                    )
-            );
+        try (Statement st = connection.createStatement(); ResultSet rs = st.executeQuery("select * from items;")) {
+            while (rs.next()) {
+                result.add(
+                        new Item(
+                                rs.getInt("id"),
+                                rs.getString("name"),
+                                rs.getString("desc"),
+                                rs.getLong("created")
+                        )
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
@@ -112,20 +125,24 @@ public class Tracker implements AutoCloseable {
      * @param key Имя для поиска
      * @return массив заявок
      */
-    public List<Item> findByName(String key) throws SQLException {
+    public List<Item> findByName(String key) {
         List<Item> result = new ArrayList<>();
-        PreparedStatement st = connection.prepareStatement("select * from items where name like ? escape '!';");
-        st.setString(1, "%" + key + "%");
-        ResultSet rs = st.executeQuery();
-        while (rs.next()) {
-            result.add(
-                    new Item(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getString("desc"),
-                            rs.getLong("created")
-                    )
-            );
+        try (PreparedStatement st = connection.prepareStatement("select * from items where name like ? escape '!';")) {
+            st.setString(1, "%" + key + "%");
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    result.add(
+                            new Item(
+                                    rs.getInt("id"),
+                                    rs.getString("name"),
+                                    rs.getString("desc"),
+                                    rs.getLong("created")
+                            )
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
@@ -136,18 +153,22 @@ public class Tracker implements AutoCloseable {
      * @param id Уникальный идентификатор
      * @return Заявка
      */
-    public Item findById(int id) throws SQLException {
+    public Item findById(int id) {
         Item result = null;
-        PreparedStatement st = connection.prepareStatement("select * from items where id = ?;");
-        st.setInt(1, id);
-        ResultSet rs = st.executeQuery();
-        if (rs.next()) {
-            result = new Item(
-                    rs.getInt("id"),
-                    rs.getString("name"),
-                    rs.getString("desc"),
-                    rs.getLong("created")
-            );
+        try (PreparedStatement st = connection.prepareStatement("select * from items where id = ?;")) {
+            st.setInt(1, id);
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    result = new Item(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("desc"),
+                            rs.getLong("created")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
@@ -161,32 +182,34 @@ public class Tracker implements AutoCloseable {
 
     private void checkTablesAndCreateIfAbsent() throws SQLException {
         if (!isTableExist("items")) {
-            Statement st = connection.createStatement();
-            try {
+            try (Statement st = connection.createStatement()) {
                 int result = st.executeUpdate(getQuery("create_items.sql"));
-            } catch (IOException e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private String getQuery(String filename) throws IOException {
+    private String getQuery(String filename) {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader in = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(filename).getFile()))) {
             String str;
             while ((str = in.readLine()) != null) {
                 sb.append(str);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return sb.toString();
     }
 
-    private boolean isTableExist(String tableName) throws SQLException {
+    private boolean isTableExist(String tableName) {
         boolean result = false;
-        DatabaseMetaData dbm = connection.getMetaData();
-        try (ResultSet rs = dbm.getTables(null, null, tableName, null)) {
+        try {
+            DatabaseMetaData dbm = connection.getMetaData();
+            ResultSet rs = dbm.getTables(null, null, tableName, null);
             result = rs.next();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
