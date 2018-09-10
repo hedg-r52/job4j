@@ -1,6 +1,5 @@
 package ru.job4j.jdbc.tracker;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,11 +83,7 @@ public class MenuTracker {
             String name = input.ask("Введите имя заявки :");
             String desc = input.ask("Введите описание заявки :");
             Item item = new Item(name, desc);
-            try {
-                tracker.add(item);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            tracker.add(item);
             System.out.println("------------ Новая заявка с id : " + item.getId() + "-----------");
         }
 
@@ -106,11 +101,7 @@ public class MenuTracker {
             String name = input.ask("Введите имя заявки :");
             String desc = input.ask("Введите описание заявки :");
             Item item = new Item(name, desc);
-            try {
-                tracker.replace(Integer.valueOf(id), item);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            tracker.replace(Integer.valueOf(id), item);
             System.out.println("------------ Заявка с id : " + item.getId() + " изменена -----------");
         }
     }
@@ -124,15 +115,11 @@ public class MenuTracker {
         public void execute(Input input, Tracker tracker) {
             System.out.println("------------ Удаление заявки --------------");
             String id = input.ask("Введите ID заявки:");
-            try {
-                if (tracker.findById(Integer.valueOf(id)) != null) {
-                    tracker.delete(Integer.valueOf(id));
-                    System.out.println("------------ Заявка с id : " + id + " удалена -----------");
-                } else {
-                    System.out.println("------------ Заявка с id : " + id + " не найдена -----------");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if (tracker.findById(Integer.valueOf(id)) != null) {
+                tracker.delete(Integer.valueOf(id));
+                System.out.println("------------ Заявка с id : " + id + " удалена -----------");
+            } else {
+                System.out.println("------------ Заявка с id : " + id + " не найдена -----------");
             }
         }
     }
@@ -147,15 +134,11 @@ public class MenuTracker {
             System.out.println("------------ Вывод заявки по id --------------");
             String id = input.ask("Введите ID заявки:");
             Item findedItem = null;
-            try {
-                findedItem = tracker.findById(Integer.valueOf(id));
-                if (findedItem != null) {
-                    System.out.println(findedItem);
-                } else {
-                    System.out.println("------------ Заявка с id : " + id + " не найдена -----------");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            findedItem = tracker.findById(Integer.valueOf(id));
+            if (findedItem != null) {
+                System.out.println(findedItem);
+            } else {
+                System.out.println("------------ Заявка с id : " + id + " не найдена -----------");
             }
         }
     }
@@ -169,17 +152,13 @@ public class MenuTracker {
         public void execute(Input input, Tracker tracker) {
             System.out.println("------------ Вывод заявки по id --------------");
             String key = input.ask("Введите имя заявки:");
-            try {
-                List<Item> findedItems = tracker.findByName(key);
-                if (findedItems.size() > 0) {
-                    for (Item item : findedItems) {
-                        System.out.println(item);
-                    }
-                } else {
-                    System.out.println("------------ Заявок не найдено -----------");
+            List<Item> findedItems = tracker.findByName(key);
+            if (findedItems.size() > 0) {
+                for (Item item : findedItems) {
+                    System.out.println(item);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } else {
+                System.out.println("------------ Заявок не найдено -----------");
             }
         }
     }
@@ -211,12 +190,8 @@ class ShowAllItemsAction extends BaseAction {
     @Override
     public void execute(Input input, Tracker tracker) {
         System.out.println("------------ Список заявок --------------");
-        try {
-            for (Item item : tracker.findAll()) {
-                System.out.println(item);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Item item : tracker.findAll()) {
+            System.out.println(item);
         }
         System.out.println("------------ Конец списка заявок --------------");
     }
