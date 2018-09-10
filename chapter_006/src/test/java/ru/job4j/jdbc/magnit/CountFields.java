@@ -14,7 +14,6 @@ import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 
 public class CountFields extends DefaultHandler {
 
@@ -28,7 +27,7 @@ public class CountFields extends DefaultHandler {
 
     @Ignore
     @Test
-    public void whenTest() throws ParserConfigurationException, SAXException, IOException, SQLException, TransformerException {
+    public void whenTest() throws ParserConfigurationException, SAXException, IOException, TransformerException {
         Config config = new Config();
         config.load("magnit.properties");
         generateRecords(config, 2_000_000);
@@ -50,13 +49,13 @@ public class CountFields extends DefaultHandler {
     }
 
     @Override
-    public void endDocument() throws SAXException {
+    public void endDocument() {
         System.out.format("Count of fields: %s\n", count);
         System.out.format("Sum of fields: %s\n", sum);
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if ("entry".equals(localName)) {
             int value = Integer.valueOf(attributes.getValue("field"));
             if (value > 0) {
@@ -67,15 +66,11 @@ public class CountFields extends DefaultHandler {
     }
 
     private static void generateRecords(Config config, int count) {
-        try {
-            StoreSQL storeSQL = new StoreSQL(config);
-            storeSQL.generate(count);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        StoreSQL storeSQL = new StoreSQL(config);
+        storeSQL.generate(count);
     }
 
-    private static void saveToXML(Config config) throws SQLException {
+    private static void saveToXML(Config config) {
         StoreSQL storeSQL = new StoreSQL(config);
         StoreXML storeXML = new StoreXML(new File(config.getValue("file.xml")));
         storeXML.save(storeSQL.selectAll());
