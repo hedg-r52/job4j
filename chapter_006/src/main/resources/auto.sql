@@ -35,7 +35,7 @@ insert into body values (3, 'SUV');
 
 insert into engine values (1, 'petrol engine');
 insert into engine values (2, 'diesel engine');
-insert into engine values (3, 'electro engine');
+insert into engine values (3, 'electric engine');
 
 insert into transmission values (1, 'AT');
 insert into transmission values (2, 'MT');
@@ -56,7 +56,7 @@ SELECT
 FROM auto AS a 
 	LEFT JOIN body AS b ON a.body_id = b.id
 	LEFT JOIN engine AS e ON a.engine_id = e.id
-	LEFT JOIN transmission AS t ON a.transmission_id = t.id
+	LEFT JOIN transmission AS t ON a.transmission_id = t.id;
 	
 -- Комплектующие не используемые в автомобиле
 SELECT b.name, 'body' as "Type"

@@ -38,9 +38,9 @@ SELECT t.name, Count(*) "count"
 	FROM "product" p, "type" t
 	WHERE p.type_id = t.id 
 	GROUP BY t.name
-	HAVING Count(*) < 10
+	HAVING Count(*) < 10;
 
 --8. Вывести все продукты и их тип.
 SELECT p.*, t.name
 	FROM "product" p, "type" t
-	WHERE p.type_id = t.id 
+	WHERE p.type_id = t.id ;

@@ -1,8 +1,6 @@
 package ru.job4j.jdbc.magnit;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StoreSQL {
     private Connection connection;
@@ -94,8 +92,8 @@ public class StoreSQL {
     /**
      * Method checks that tables is exist
      *
-     * @param tableName
-     * @return
+     * @param tableName name of table
+     * @return true if table exist
      */
     private boolean isTableExist(String tableName) {
         boolean result = false;

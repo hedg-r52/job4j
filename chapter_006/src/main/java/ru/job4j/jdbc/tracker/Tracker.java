@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -25,7 +26,7 @@ public class Tracker implements AutoCloseable {
      * check tables and create them if absent
      *
      * @param config name of file of properties
-     * @throws SQLException
+     * @throws SQLException sql exception
      */
     public Tracker(String config) throws SQLException {
         Settings settings = new Settings();
@@ -192,7 +193,7 @@ public class Tracker implements AutoCloseable {
 
     private String getQuery(String filename) {
         StringBuilder sb = new StringBuilder();
-        try (BufferedReader in = new BufferedReader(new FileReader(getClass().getClassLoader().getResource(filename).getFile()))) {
+        try (BufferedReader in = new BufferedReader(new FileReader(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).getFile()))) {
             String str;
             while ((str = in.readLine()) != null) {
                 sb.append(str);

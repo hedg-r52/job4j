@@ -30,7 +30,7 @@ public class CountFields extends DefaultHandler {
     public void whenTest() throws ParserConfigurationException, SAXException, IOException, TransformerException {
         Config config = new Config();
         config.load("magnit.properties");
-        generateRecords(config, 2_000_000);
+        generateRecords(config);
         saveToXML(config);
         transformXML(config);
         parse(config);
@@ -65,9 +65,9 @@ public class CountFields extends DefaultHandler {
         }
     }
 
-    private static void generateRecords(Config config, int count) {
+    private static void generateRecords(Config config) {
         StoreSQL storeSQL = new StoreSQL(config);
-        storeSQL.generate(count);
+        storeSQL.generate(2_000_000);
     }
 
     private static void saveToXML(Config config) {

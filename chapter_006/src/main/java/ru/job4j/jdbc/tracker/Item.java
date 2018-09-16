@@ -56,18 +56,16 @@ public class Item {
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("ID : ")
-                .append(this.getId())
-                .append("  Заявка: ")
-                .append(this.getName())
-                .append(System.lineSeparator())
-                .append("Описание : ")
-                .append(this.getDesc())
-                .append(System.lineSeparator())
-                .append("------------")
-                .append(System.lineSeparator())
-                .toString();
+        return "ID : " +
+                this.getId() +
+                "  Заявка: " +
+                this.getName() +
+                System.lineSeparator() +
+                "Описание : " +
+                this.getDesc() +
+                System.lineSeparator() +
+                "------------" +
+                System.lineSeparator();
     }
 
     @Override

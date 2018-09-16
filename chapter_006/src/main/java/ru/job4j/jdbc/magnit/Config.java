@@ -2,8 +2,8 @@ package ru.job4j.jdbc.magnit;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Properties;
 
 public class Config {
@@ -11,7 +11,7 @@ public class Config {
 
     public void load(String filename) {
         try (FileInputStream inputStream =
-                     new FileInputStream(new File(getClass().getClassLoader().getResource(filename).getFile()))) {
+                     new FileInputStream(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).getFile()))) {
             this.properties.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();

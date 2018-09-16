@@ -2,10 +2,6 @@ package ru.job4j.jdbc.tracker;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -14,7 +10,7 @@ public class TrackerTest {
     @Ignore
     @Test
     public void whenCheckAllMethodsOfTracker() {
-        try (Tracker tracker = new Tracker("configuration.properties");) {
+        try (Tracker tracker = new Tracker("configuration.properties")) {
             int recordCount = tracker.findAll().size();
             Item item = new Item("test name", "test description", 123L);
 

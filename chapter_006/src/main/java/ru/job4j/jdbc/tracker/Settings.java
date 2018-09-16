@@ -1,6 +1,7 @@
 package ru.job4j.jdbc.tracker;
 
 import java.io.*;
+import java.util.Objects;
 import java.util.Properties;
 
 public class Settings {
@@ -15,10 +16,8 @@ public class Settings {
     }
 
     public void load(String config) {
-        try (FileInputStream inputStream = new FileInputStream(new File(getClass().getClassLoader().getResource(config).getFile()))) {
+        try (FileInputStream inputStream = new FileInputStream(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(config)).getFile()))) {
             load(inputStream);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
