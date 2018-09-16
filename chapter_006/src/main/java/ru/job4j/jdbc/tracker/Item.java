@@ -22,6 +22,7 @@ public class Item {
         this(name, desc, created);
         this.id = id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -56,16 +57,16 @@ public class Item {
 
     @Override
     public String toString() {
-        return "ID : " +
-                this.getId() +
-                "  Заявка: " +
-                this.getName() +
-                System.lineSeparator() +
-                "Описание : " +
-                this.getDesc() +
-                System.lineSeparator() +
-                "------------" +
-                System.lineSeparator();
+        return "ID : "
+                + this.getId()
+                + "  Заявка: "
+                + this.getName()
+                + System.lineSeparator()
+                + "Описание : "
+                + this.getDesc()
+                + System.lineSeparator()
+                + "------------"
+                + System.lineSeparator();
     }
 
     @Override
