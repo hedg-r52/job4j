@@ -12,19 +12,4 @@ public class Compute {
         }
         return result;
     }
-
-    public static void main(String[] args) {
-        Compute c = new Compute();
-        final int START = 1;
-        final int END = 5;
-        List<Double> linear = c.diapason(START, END, (x) -> (2 * x + 5));
-        linear.forEach(System.out::println);
-        System.out.println();
-        List<Double> quadratic = c.diapason(START, END, (x) -> (Math.pow(x, 2) + 5));
-        quadratic.forEach(System.out::println);
-        System.out.println();
-        List<Double> logarifmic = c.diapason(START, END, (x) -> (Math.log(x) + 5));
-        logarifmic.forEach(System.out::println);
-    }
-
 }
