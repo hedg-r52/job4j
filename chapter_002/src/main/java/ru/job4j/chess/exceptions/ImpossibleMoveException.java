@@ -1,4 +1,4 @@
-package ru.job4j.chess;
+package ru.job4j.chess.exceptions;
 
 /**
  * Исключение - Невозможно сделать ход
