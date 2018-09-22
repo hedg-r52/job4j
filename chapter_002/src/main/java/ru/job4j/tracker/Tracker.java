@@ -1,9 +1,7 @@
 package ru.job4j.tracker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author Andrei Soloviev (hedg.r52@gmail.com)
@@ -68,12 +66,11 @@ public class Tracker {
      * @return массив заявок
      */
     public List<Item> findByName(String key) {
+        Predicate<Item> searchByKey = p -> p.getName().equals(key);
         List<Item> findedItems = new ArrayList<>();
-        for (Item item : this.items) {
-            if (item.getName().equals(key)) {
-                findedItems.add(item);
-            }
-        }
+        this.items.stream().filter(searchByKey).forEach(
+                p -> findedItems.add(p)
+        );
         return findedItems;
     }
 
@@ -83,13 +80,13 @@ public class Tracker {
      * @return Заявка
      */
     public Item findById(String id) {
-        Item result = null;
-        for (Item item : this.items) {
-            if (item.getId().equals(id)) {
-                result = item;
-            }
+        Predicate<Item> searchById = p -> p.getId().equals(id);
+        Optional<Item> foundItem = this.items.stream().findFirst().filter(searchById);
+        if (foundItem.isPresent()) {
+            return foundItem.get();
+        } else {
+            return null;
         }
-        return result;
     }
 
     /**
