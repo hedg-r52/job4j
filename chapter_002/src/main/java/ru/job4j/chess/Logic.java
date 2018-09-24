@@ -3,7 +3,10 @@ package ru.job4j.chess;
 import ru.job4j.chess.exceptions.*;
 import ru.job4j.chess.figures.Cell;
 import ru.job4j.chess.figures.Figure;
+
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Logic for chess
@@ -50,8 +53,9 @@ public class Logic {
     }
 
     private Optional<Integer> findBy(Cell cell) {
+        Predicate<Figure> figureAtCell = f -> f != null && f.position().equals(cell);
         for (int index = 0; index != this.figures.length; index++) {
-            if (this.figures[index] != null && this.figures[index].position().equals(cell)) {
+            if (figureAtCell.test(this.figures[index])) {
                 return Optional.of(index);
             }
         }
