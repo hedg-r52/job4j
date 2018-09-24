@@ -1,6 +1,4 @@
-package ru.job4j.start;
-
-import ru.job4j.tracker.*;
+package ru.job4j.tracker;
 
 import java.util.List;
 

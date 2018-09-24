@@ -15,7 +15,7 @@ public class MenuTracker {
     private Tracker tracker;
     private List<UserAction> actions = new ArrayList<>();
     private boolean exit;
-    Consumer<Object> consumer;
+    private Consumer<Object> consumer;
 
     public MenuTracker(Input input, Tracker tracker) {
         this.input = input;
