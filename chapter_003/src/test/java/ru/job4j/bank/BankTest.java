@@ -3,6 +3,7 @@ package ru.job4j.bank;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
@@ -20,7 +21,7 @@ public class BankTest {
         Bank bank = new Bank();
         User expected = new User("user", "2200 123321");
         bank.addUser(expected);
-        User result = bank.getUserByPassport("2200 123321");
+        User result = bank.getUserByPassport("2200 123321").get();
         assertThat(result, is(expected));
     }
 
@@ -30,8 +31,8 @@ public class BankTest {
         User user = new User("user", "2200 123321");
         bank.addUser(user);
         bank.deleteUser(user);
-        User result = bank.getUserByPassport("2200 123321");
-        assertThat(result.isNull(), is(true));
+        Optional<User> result = bank.getUserByPassport("2200 123321");
+        assertThat(result.isPresent(), is(false));
     }
 
     @Test
@@ -41,7 +42,7 @@ public class BankTest {
         bank.addUser(user);
         Account expected = new Account(0.0, "0123456789");
         bank.addAccountToUser("2200 123321", expected);
-        Account result = bank.getAccountByRequisite(user, "0123456789");
+        Account result = bank.getAccountByRequisite(user, "0123456789").get();
         assertThat(result, is(expected));
     }
 
@@ -53,8 +54,8 @@ public class BankTest {
         Account account = new Account(0.0, "0123456789");
         bank.addAccountToUser("2200 123321", account);
         bank.deleteAccountFromUser("2200 123321", account);
-        Account result = bank.getAccountByRequisite(user, "0123456789");
-        assertThat(result.isNull(), is(true));
+        Optional<Account> result = bank.getAccountByRequisite(user, "0123456789");
+        assertThat(result.isPresent(), is(false));
     }
 
     @Test
@@ -85,8 +86,8 @@ public class BankTest {
         bank.addUser(dstUser);
         bank.addAccountToUser(dstPassport, new Account(0.0D, dstRequisite));
         bank.transferMoney(srcPassport, srcRequisite, dstPassport, dstRequisite, 50.0D);
-        assertThat(bank.getAccountByRequisite(srcUser, srcRequisite).getValues(), is(50.0D));
-        assertThat(bank.getAccountByRequisite(dstUser, dstRequisite).getValues(), is(50.0D));
+        assertThat(bank.getAccountByRequisite(srcUser, srcRequisite).get().getValues(), is(50.0D));
+        assertThat(bank.getAccountByRequisite(dstUser, dstRequisite).get().getValues(), is(50.0D));
     }
 
 }

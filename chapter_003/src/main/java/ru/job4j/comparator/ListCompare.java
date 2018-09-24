@@ -1,10 +1,9 @@
 package ru.job4j.comparator;
 
 import java.util.Comparator;
-import java.util.List;
 
 /**
- * TODO description
+ * List compare
  *
  * @author Andrei Soloviev (hedg.r52@gmail.com)
  * @version $Id$

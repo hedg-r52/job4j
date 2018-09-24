@@ -1,9 +1,6 @@
 package ru.job4j.bank;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Банк
@@ -16,7 +13,7 @@ public class Bank {
     private Map<User, List<Account>> users;
 
     public Bank() {
-        this.users = new TreeMap<User, List<Account>>();
+        this.users = new TreeMap<>();
     }
 
     public void addUser(User user) {
@@ -28,63 +25,46 @@ public class Bank {
     }
 
     public void addAccountToUser(String passport, Account account) {
-        User user = getUserByPassport(passport);
-        if (!user.isNull()) {
-            this.users.get(user).add(account);
-        }
+        Optional<User> user = getUserByPassport(passport);
+        user.ifPresent(u -> this.users.get(u).add(account));
     }
 
     public void deleteAccountFromUser(String passport, Account account) {
-        User user = getUserByPassport(passport);
-        if (!user.isNull()) {
-            this.users.get(user).remove(account);
-        }
+        Optional<User> user = getUserByPassport(passport);
+        user.ifPresent(u -> this.users.get(u).remove(account));
     }
 
     public List<Account> getUserAccounts(String passport) {
-        List<Account> result = new ArrayList<Account>();
-        User user = getUserByPassport(passport);
-        if (!user.isNull()) {
-            result = this.users.get(user);
+        List<Account> result = new ArrayList<>();
+        Optional<User> user = getUserByPassport(passport);
+        if (user.isPresent()) {
+            result = this.users.get(user.get());
         }
         return result;
     }
 
     public boolean transferMoney(String srcPassport, String srcRequisite,
                                  String dstPassport, String dstRequisite, double amount) {
-        User srcUser = getUserByPassport(srcPassport);
-        User dstUser = getUserByPassport(dstPassport);
-        Account srcAccount = getAccountByRequisite(srcUser, srcRequisite);
-        Account dstAccount = getAccountByRequisite(dstUser, dstRequisite);
+        Optional<User> srcUser = getUserByPassport(srcPassport);
+        Optional<User> dstUser = getUserByPassport(dstPassport);
         boolean result = false;
-        if (!(srcUser.isNull() || dstUser.isNull() || srcAccount.isNull() || dstAccount.isNull())) {
-            if (srcAccount.getValues() >= amount) {
-                srcAccount.setValues(srcAccount.getValues() - amount);
-                dstAccount.setValues(dstAccount.getValues() + amount);
+        if (srcUser.isPresent() && dstUser.isPresent()) {
+            Optional<Account> srcAccount = getAccountByRequisite(srcUser.get(), srcRequisite);
+            Optional<Account> dstAccount = getAccountByRequisite(dstUser.get(), dstRequisite);
+            if (srcAccount.isPresent() && dstAccount.isPresent() && (srcAccount.get().getValues() >= amount)) {
+                srcAccount.get().setValues(srcAccount.get().getValues() - amount);
+                dstAccount.get().setValues(dstAccount.get().getValues() + amount);
                 result = true;
             }
         }
         return result;
     }
 
-    protected User getUserByPassport(String passport) {
-        User result = new NullUser();
-        for (User user : this.users.keySet()) {
-            if (passport.equals(user.getPassport())) {
-                result = user;
-            }
-        }
-        return result;
+    protected Optional<User> getUserByPassport(String passport) {
+        return this.users.keySet().stream().filter(u -> passport.equals(u.getPassport())).findFirst();
     }
 
-    protected Account getAccountByRequisite(User user, String requisite) {
-        Account result = new NullAccount(0D, "");
-        for (Account account : this.users.get(user)) {
-            if (requisite.equals(account.getRequisites())) {
-                result = account;
-                break;
-            }
-        }
-        return result;
+    protected Optional<Account> getAccountByRequisite(User user, String requisite) {
+        return this.users.get(user).stream().filter(account -> requisite.equals(account.getRequisites())).findFirst();
     }
 }

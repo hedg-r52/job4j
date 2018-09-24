@@ -12,25 +12,22 @@ import java.util.*;
 public class DeptSort {
 
     public List<Org> sort(List<Org> orgs) {
-        Comparator<Org> deptComparator = new Comparator<Org>() {
-            @Override
-            public int compare(Org org1, Org org2) {
-                int min = Math.min(org1.length(), org2.length());
-                int result = 0;
-                for (int i = 0; i < min; i++) {
-                    if (!org1.get(i).equals(org2.get(i))) {
-                        result = org1.get(i).compareTo(org2.get(i));
-                        break;
-                    }
+        Comparator<Org> deptComparator = (org1, org2) -> {
+            int min = Math.min(org1.length(), org2.length());
+            int result = 0;
+            for (int i = 0; i < min; i++) {
+                if (!org1.get(i).equals(org2.get(i))) {
+                    result = org1.get(i).compareTo(org2.get(i));
+                    break;
                 }
-                if (result == 0) {
-                    result = (org1.length() - org2.length());
-                }
-                return result;
             }
+            if (result == 0) {
+                result = (org1.length() - org2.length());
+            }
+            return result;
         };
         orgs = appendAllNodes(orgs);
-        Collections.sort(orgs, deptComparator);
+        orgs.sort(deptComparator);
         return orgs;
     }
 
@@ -46,8 +43,7 @@ public class DeptSort {
                 result.add(new Org(path.toString()));
             }
         }
-        List<Org> list = new ArrayList<>();
-        list.addAll(result);
+        List<Org> list = new ArrayList<>(result);
         return list;
     }
 }
