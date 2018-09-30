@@ -66,11 +66,10 @@ public class Tracker {
      * @return массив заявок
      */
     public List<Item> findByName(String key) {
-        Predicate<Item> searchByKey = p -> p.getName().equals(key);
         List<Item> findedItems = new ArrayList<>();
-        this.items.stream().filter(searchByKey).forEach(
-                p -> findedItems.add(p)
-        );
+        this.items.stream()
+                .filter(item -> item.getName().equals(key))
+                .forEach(p -> findedItems.add(p));
         return findedItems;
     }
 
@@ -80,13 +79,10 @@ public class Tracker {
      * @return Заявка
      */
     public Item findById(String id) {
-        Predicate<Item> searchById = p -> p.getId().equals(id);
-        Optional<Item> foundItem = this.items.stream().findFirst().filter(searchById);
-        if (foundItem.isPresent()) {
-            return foundItem.get();
-        } else {
-            return null;
-        }
+        Optional<Item> foundItem = this.items.stream()
+                .findFirst()
+                .filter(item -> item.getId().equals(id));
+        return (foundItem.isPresent() ? foundItem.get() : null);
     }
 
     /**
