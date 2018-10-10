@@ -6,8 +6,8 @@ public enum Direction {
     EAST(-1, 0),
     NORTH(0, -1);
 
-    private int deltaX;
-    private int deltaY;
+    private final int deltaX;
+    private final int deltaY;
 
 
     Direction(int deltaX, int deltaY) {
