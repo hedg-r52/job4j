@@ -37,13 +37,9 @@ public class Logic implements Runnable {
         this.caught = caught;
     }
 
-    public void init(int x, int y, ReentrantLock block) {
+    public synchronized void init(int x, int y, ReentrantLock block) {
         board[x][y] = block;
         board[x][y].lock();
-    }
-
-    public ReentrantLock[][] getBoard() {
-        return board;
     }
 
     public int getWidth() {
