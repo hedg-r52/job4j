@@ -9,9 +9,8 @@ public class Config {
     private final Properties properties = new Properties();
 
     public void load(String filename) {
-        try (FileInputStream inputStream =
-                     new FileInputStream(new File(getClass().getClassLoader().getResource(filename).getFile()))) {
-            this.properties.load(inputStream);
+        try {
+            properties.load(Config.class.getResourceAsStream("/app.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }

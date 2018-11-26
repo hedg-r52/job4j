@@ -8,12 +8,14 @@ public class Vacancy {
     private String url;
     private String authorName;
     private LocalDateTime dateTime;
+    private String message;
 
-    public Vacancy(String title, String url, String authorName, LocalDateTime dateTime) {
+    public Vacancy(String title, String url, String authorName, LocalDateTime dateTime, String message) {
         this.title = title;
         this.url = url;
         this.authorName = authorName;
         this.dateTime = dateTime;
+        this.message = message;
     }
 
     public String getTitle() {
@@ -32,6 +34,10 @@ public class Vacancy {
         return dateTime;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -43,12 +49,11 @@ public class Vacancy {
         Vacancy vacancy = (Vacancy) o;
         return Objects.equals(title, vacancy.title)
                 && Objects.equals(url, vacancy.url)
-                && Objects.equals(authorName, vacancy.authorName)
-                && Objects.equals(dateTime, vacancy.dateTime);
+                && Objects.equals(authorName, vacancy.authorName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, url, authorName, dateTime);
+        return Objects.hash(title, url, authorName);
     }
 }
