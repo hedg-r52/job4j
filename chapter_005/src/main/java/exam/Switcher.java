@@ -8,8 +8,8 @@ public class Switcher {
 
     private StringBuilder sb;
     public static final int SEQUENCE_LENGTH = 10;
-    final Semaphore sem1 = new Semaphore(0);
-    final Semaphore sem2 = new Semaphore(1);
+    final Semaphore sem1 = new Semaphore(1);
+    final Semaphore sem2 = new Semaphore(0);
 
     public Switcher() {
         this.sb = new StringBuilder();
@@ -54,14 +54,14 @@ class Adder implements Runnable {
         int i = 0;
         while (i < repeating) {
             try {
-                semaphoreOther.acquire();
+                semaphoreOwn.acquire();
                 for (int j = 0; j < Switcher.SEQUENCE_LENGTH; j++) {
                     switcher.convertAndAdd(number);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            semaphoreOwn.release();
+            semaphoreOther.release();
             i++;
         }
     }
