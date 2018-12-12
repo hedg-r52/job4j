@@ -11,11 +11,11 @@ import java.util.List;
 public class MenuTracker {
 
     private Input input;
-    private Tracker tracker;
+    private TrackerSQL tracker;
     private List<UserAction> actions = new ArrayList<>();
     private boolean exit;
 
-    public MenuTracker(Input input, Tracker tracker) {
+    public MenuTracker(Input input, TrackerSQL tracker) {
         this.input = input;
         this.tracker = tracker;
         exit = false;
@@ -30,13 +30,13 @@ public class MenuTracker {
     }
 
     public void fillActions() {
-        this.actions.add(new MenuTracker.AddItemAction(0, "Add the new item."));
-        this.actions.add(new ShowAllItemsAction(1, "Show all items."));
-        this.actions.add(this.new EditItemAction(2, "Edit item."));
-        this.actions.add(new MenuTracker.DeleteItemAction(3, "Delete item."));
-        this.actions.add(new MenuTracker.FindItemByIdAction(4, "Find item by id."));
-        this.actions.add(new MenuTracker.FindItemsByNameAction(5, "Find items by name."));
-        this.actions.add(new MenuTracker.ExitAction(6, "Exit Program.", this));
+        actions.add(new MenuTracker.AddItemAction(0, "Add the new item."));
+        actions.add(new ShowAllItemsAction(1, "Show all items."));
+        actions.add(this.new EditItemAction(2, "Edit item."));
+        actions.add(new MenuTracker.DeleteItemAction(3, "Delete item."));
+        actions.add(new MenuTracker.FindItemByIdAction(4, "Find item by id."));
+        actions.add(new MenuTracker.FindItemsByNameAction(5, "Find items by name."));
+        actions.add(new MenuTracker.ExitAction(6, "Exit Program.", this));
     }
 
     /**
@@ -78,7 +78,7 @@ public class MenuTracker {
         }
 
         @Override
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, TrackerSQL tracker) {
             System.out.println("------------ Добавление новой заявки --------------");
             String name = input.ask("Введите имя заявки :");
             String desc = input.ask("Введите описание заявки :");
@@ -95,7 +95,7 @@ public class MenuTracker {
         }
 
         @Override
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, TrackerSQL tracker) {
             System.out.println("------------ Изменение заявки --------------");
             String id = input.ask("Введите ID заявки:");
             String name = input.ask("Введите имя заявки :");
@@ -112,7 +112,7 @@ public class MenuTracker {
         }
 
         @Override
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, TrackerSQL tracker) {
             System.out.println("------------ Удаление заявки --------------");
             String id = input.ask("Введите ID заявки:");
             if (tracker.findById(Integer.valueOf(id)) != null) {
@@ -130,7 +130,7 @@ public class MenuTracker {
         }
 
         @Override
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, TrackerSQL tracker) {
             System.out.println("------------ Вывод заявки по id --------------");
             String id = input.ask("Введите ID заявки:");
             Item foundItem = tracker.findById(Integer.valueOf(id));
@@ -148,7 +148,7 @@ public class MenuTracker {
         }
 
         @Override
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, TrackerSQL tracker) {
             System.out.println("------------ Вывод заявки по id --------------");
             String key = input.ask("Введите имя заявки:");
             List<Item> foundItems = tracker.findByName(key);
@@ -175,7 +175,7 @@ public class MenuTracker {
         }
 
         @Override
-        public void execute(Input input, Tracker tracker) {
+        public void execute(Input input, TrackerSQL tracker) {
             outer.setExit(true);
         }
     }
@@ -187,7 +187,7 @@ class ShowAllItemsAction extends BaseAction {
     }
 
     @Override
-    public void execute(Input input, Tracker tracker) {
+    public void execute(Input input, TrackerSQL tracker) {
         System.out.println("------------ Список заявок --------------");
         for (Item item : tracker.findAll()) {
             System.out.println(item);

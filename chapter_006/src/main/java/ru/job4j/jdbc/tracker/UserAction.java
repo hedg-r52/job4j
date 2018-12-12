@@ -7,6 +7,6 @@ package ru.job4j.jdbc.tracker;
  */
 public interface UserAction {
     int key();
-    void execute(Input input, Tracker tracker);
+    void execute(Input input, TrackerSQL tracker);
     String info();
 }
