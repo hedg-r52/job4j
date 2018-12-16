@@ -20,7 +20,7 @@ public class ParserSqlRu {
     private Pattern needPattern;
     private Pattern excludePattern;
 
-    private ParserSqlRu() throws SQLException {
+    public ParserSqlRu() throws SQLException {
         Config config = new Config();
         config.load("app.properties");
         String dbUrl = String.format(
@@ -58,7 +58,7 @@ public class ParserSqlRu {
                 ");");
     }
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public void execute() throws IOException, SQLException {
         ParserSqlRu parserSqlRu = new ParserSqlRu();
         List<Vacancy> vacancies = parserSqlRu.parse(getLastTimeStampFromTable(connection));
         parserSqlRu.insert2db(vacancies);
