@@ -3,6 +3,19 @@ language: java
 # используем режим обычного пользователя для сборки проекта.
 sudo: false
 
+jdk:
+  - oraclejdk8
+
+services:
+  - postgresql
+
+before_install:
+  - psql -c 'create database tracker;' -U postgres
+
+cache:
+  directories:
+  - $HOME/.m2
+
 # после выполнения сборки запустить скрипт, который будет собирать статистику по JaCoCo
 # Здесь используется сторонни сервис https://codecov.io/
 after_success:
