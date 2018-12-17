@@ -10,15 +10,14 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ParserSqlRu {
 
-    private String START_PAGE_URL = "http://www.sql.ru/forum/job-offers";
-    private static Logger LOG = LogManager.getLogger(ParserSqlRu.class);
-    private static Connection connection;
-    private Pattern needPattern;
-    private Pattern excludePattern;
+    private final String START_PAGE_URL = "http://www.sql.ru/forum/job-offers";
+    private final static Logger LOG = LogManager.getLogger(ParserSqlRu.class);
+    private final Pattern needPattern;
+    private final Pattern excludePattern;
+    private final Connection connection;
 
     public ParserSqlRu() throws SQLException {
         Config config = new Config();
@@ -33,35 +32,33 @@ public class ParserSqlRu {
                 config.getValue("jdbc.username"),
                 config.getValue("jdbc.password")
         );
-        List<String> needAllWords = new ArrayList<>(
-                Arrays.asList("java", "java8", "JEE")
-        );
-        List<String> excludeWords = new ArrayList<>(
-                Arrays.asList("java script", "javascript", "js")
-        );
-        String regexNeed = String.join("|", needAllWords.stream().map(word -> "\\b" + word + "\\b").collect(Collectors.toList()));
-        needPattern = Pattern.compile(regexNeed, Pattern.CASE_INSENSITIVE);
-        String regexExclude = String.join("|", excludeWords.stream().map(word -> "\\b" + word + "\\b").collect(Collectors.toList()));
-        excludePattern = Pattern.compile(regexExclude, Pattern.CASE_INSENSITIVE);
+        needPattern = Pattern.compile("\\bjava\\b|\\bjava8\\b|\\bJEE\\b", Pattern.CASE_INSENSITIVE);
+        excludePattern = Pattern.compile("\\bjava script\\b|\\bjavascript\\b|\\bjs\\b", Pattern.CASE_INSENSITIVE);
         checkTablesAndCreateIfAbsent();
     }
 
-    private void checkTablesAndCreateIfAbsent() throws SQLException {
-        Statement st = connection.createStatement();
-        st.execute("CREATE TABLE if NOT EXISTS vacancies\n" +
-                "(\n" +
-                "    href char(300) PRIMARY KEY NOT NULL,\n" +
-                "    datetime TIMESTAMP,\n" +
-                "    author varchar(100),\n" +
-                "    title varchar(300),\n" +
-                "    msg text\n" +
-                ");");
+    private void checkTablesAndCreateIfAbsent() {
+        try (Statement st = connection.createStatement()) {
+            st.execute("CREATE TABLE if NOT EXISTS vacancies\n" +
+                    "(\n" +
+                    "    href char(300) PRIMARY KEY NOT NULL,\n" +
+                    "    datetime TIMESTAMP,\n" +
+                    "    author varchar(100),\n" +
+                    "    title varchar(300),\n" +
+                    "    msg text\n" +
+                    ");"
+            );
+        } catch (SQLException e) {
+            LOG.warn(e.toString());
+        }
     }
 
     public void execute() throws IOException, SQLException {
+        LOG.info("SQL Parser started...");
         ParserSqlRu parserSqlRu = new ParserSqlRu();
         List<Vacancy> vacancies = parserSqlRu.parse(getLastTimeStampFromTable(connection));
         parserSqlRu.insert2db(vacancies);
+        LOG.info("SQL Parser finished.");
     }
 
     private void insert2db(List<Vacancy> vacancies) {
@@ -169,11 +166,10 @@ public class ParserSqlRu {
         return result;
     }
 
-    private static LocalDateTime getLastTimeStampFromTable(Connection connection) {
+    private LocalDateTime getLastTimeStampFromTable(Connection connection) {
         LocalDateTime result = null;
         long count = 0;
-        String queryCountRecords = "SELECT COUNT(datetime) FROM vacancies";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(queryCountRecords)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(datetime) FROM vacancies")) {
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 count = rs.getLong(1);
