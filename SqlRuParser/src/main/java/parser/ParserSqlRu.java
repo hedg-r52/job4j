@@ -1,5 +1,6 @@
 package parser;
 
+import jdbc.DBHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;
@@ -10,47 +11,44 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ParserSqlRu {
 
-    private final String START_PAGE_URL = "http://www.sql.ru/forum/job-offers";
+    private final String startPageUrl = "http://www.sql.ru/forum/job-offers";
     private final static Logger LOG = LogManager.getLogger(ParserSqlRu.class);
     private final Pattern needPattern;
     private final Pattern excludePattern;
     private final Connection connection;
+    private final DBHelper db;
 
     public ParserSqlRu() throws SQLException {
         Config config = new Config();
         config.load("app.properties");
-        String dbUrl = String.format(
-                "%s%s",
-                config.getValue("jdbc.driver"),
-                config.getValue("jdbc.url")
-        );
         connection = DriverManager.getConnection(
-                dbUrl,
+                config.getValue("jdbc.url"),
                 config.getValue("jdbc.username"),
                 config.getValue("jdbc.password")
         );
+        db = new DBHelper(connection, LogManager.getLogger(ParserSqlRu.class));
         needPattern = Pattern.compile("\\bjava\\b|\\bjava8\\b|\\bJEE\\b", Pattern.CASE_INSENSITIVE);
         excludePattern = Pattern.compile("\\bjava script\\b|\\bjavascript\\b|\\bjs\\b", Pattern.CASE_INSENSITIVE);
         checkTablesAndCreateIfAbsent();
     }
 
     private void checkTablesAndCreateIfAbsent() {
-        try (Statement st = connection.createStatement()) {
-            st.execute("CREATE TABLE if NOT EXISTS vacancies\n" +
-                    "(\n" +
-                    "    href char(300) PRIMARY KEY NOT NULL,\n" +
-                    "    datetime TIMESTAMP,\n" +
-                    "    author varchar(100),\n" +
-                    "    title varchar(300),\n" +
-                    "    msg text\n" +
-                    ");"
-            );
-        } catch (SQLException e) {
-            LOG.warn(e.toString());
-        }
+        db.query("CREATE TABLE if NOT EXISTS vacancies\n"
+                + "(\n"
+                + "    href char(300) PRIMARY KEY NOT NULL,\n"
+                + "    datetime TIMESTAMP,\n"
+                + "    author varchar(100),\n"
+                + "    title varchar(300),\n"
+                + "    msg text\n"
+                + ");",
+                Arrays.asList(),
+                ps -> {
+                    ps.execute();
+                });
     }
 
     public void execute() throws IOException, SQLException {
@@ -62,23 +60,17 @@ public class ParserSqlRu {
     }
 
     private void insert2db(List<Vacancy> vacancies) {
-        String q = "INSERT INTO vacancies(href, datetime, author, title, msg) VALUES (?, ?, ?, ?, ?);";
-        try (PreparedStatement st = connection.prepareStatement(q)) {
-            connection.setAutoCommit(false);
-            for (Vacancy v : vacancies) {
-                st.setString(1, v.getUrl());
-                st.setTimestamp(2,  Timestamp.valueOf(v.getDateTime()));
-                st.setString(3, v.getAuthorName());
-                st.setString(4, v.getTitle());
-                st.setString(5, v.getMessage());
-                st.addBatch();
-            }
-            st.executeBatch();
-            connection.commit();
-            connection.setAutoCommit(true);
-        } catch (SQLException e) {
-            LOG.warn(e.toString());
-        }
+        List<Object> params = vacancies
+                .stream()
+                .map(v -> Arrays.asList(v.getUrl(), Timestamp.valueOf(v.getDateTime()), v.getAuthorName(), v.getTitle(), v.getMessage()))
+                .collect(Collectors.toCollection(ArrayList::new));
+        db.queryCycle(
+                "INSERT INTO vacancies(href, datetime, author, title, msg) VALUES (?, ?, ?, ?, ?)",
+                params,
+                ps -> {
+                   ps.execute();
+                }
+        );
     }
 
     private List<Vacancy> parse(LocalDateTime onTheDate) throws IOException {
@@ -87,7 +79,7 @@ public class ParserSqlRu {
             onTheDate = LocalDateTime.now().withDayOfYear(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         }
         boolean working = true;
-        int maxCountPage = getMaxPageNumber(START_PAGE_URL);
+        int maxCountPage = getMaxPageNumber(startPageUrl);
         int counter = 1;
         do {
             Document document = Jsoup.connect(getURL(counter)).get();
@@ -130,9 +122,9 @@ public class ParserSqlRu {
     private String getURL(int counter) {
         String url;
         if (counter > 1) {
-            url = String.format("%s/%s", START_PAGE_URL, counter);
+            url = String.format("%s/%s", startPageUrl, counter);
         } else {
-            url = START_PAGE_URL;
+            url = startPageUrl;
         }
         return url;
     }
@@ -161,32 +153,42 @@ public class ParserSqlRu {
                 result = result.minusDays(1);
             }
         } else {
-            result = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("d MMM yy, HH:mm").withLocale( new Locale("ru")));
+            result = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("d MMM yy, HH:mm").withLocale(new Locale("ru")));
         }
         return result;
     }
 
     private LocalDateTime getLastTimeStampFromTable(Connection connection) {
-        LocalDateTime result = null;
-        long count = 0;
-        try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(datetime) FROM vacancies")) {
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                count = rs.getLong(1);
-            }
-        } catch (SQLException e) {
-            LOG.warn("No fields with TimeStamp");
-        }
-        if (count > 1) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT MAX(datetime) FROM vacancies")) {
-                ResultSet rs = preparedStatement.executeQuery();
-                if (rs.next()) {
-                    result = rs.getObject(1, LocalDateTime.class);
+
+        long count = db.query(
+                "SELECT COUNT(datetime) FROM vacancies",
+                Arrays.asList(),
+                ps -> {
+                    long c = 0;
+                    try (final ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            c = rs.getLong(1);
+                        }
+                    }
+
+                    return c;
                 }
-                LOG.info("Get last TimeStamp from table vacancies : " + result);
-            } catch (SQLException e) {
-                LOG.warn("No fields with TimeStamp");
-            }
+        ).orElse(0L);
+        LocalDateTime result = null;
+        if (count > 1) {
+            result = db.query(
+                    "SELECT MAX(datetime) FROM vacancies",
+                    Arrays.asList(),
+                    ps -> {
+                        LocalDateTime r = null;
+                        try (final ResultSet rs = ps.executeQuery()) {
+                            if (rs.next()) {
+                                r = rs.getObject(1, LocalDateTime.class);
+                            }
+                        }
+                        return r;
+                    }
+            ).orElse(null);
         }
         return result;
     }

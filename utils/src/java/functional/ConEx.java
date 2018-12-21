@@ -1,4 +1,4 @@
-package ru.job4j.jdbc.tracker;
+package functional;
 
 /**
  * Function interface. It take a single param.

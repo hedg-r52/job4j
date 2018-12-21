@@ -1,5 +1,7 @@
 package ru.job4j.jdbc.tracker;
 
+import jdbc.DBHelper;
+import org.apache.log4j.LogManager;
 import java.sql.*;
 import java.util.*;
 
@@ -9,54 +11,10 @@ import java.util.*;
  * @since 0.1
  */
 public class TrackerSQL implements AutoCloseable {
-    private final Connection connection;
-    private final Map<Class<?>, TripleConEx<Integer, PreparedStatement, Object>> dispatch = new HashMap();
+    private final DBHelper db;
 
     public TrackerSQL(Connection connection) {
-        this.connection = connection;
-        this.dispatch.put(Integer.class, (index, ps, value) -> ps.setInt(index, (Integer) value));
-        this.dispatch.put(String.class, (index, ps, value) -> ps.setString(index, (String) value));
-        this.dispatch.put(Long.class, (index, ps, value) -> ps.setLong(index, (Long) value));
-    }
-
-    private <T> void forIndex(List<T> list, BiConEx<Integer, T> consumer) throws Exception {
-        for (int index = 0; index != list.size(); index++) {
-            consumer.accept(index, list.get(index));
-        }
-    }
-
-    private <R> Optional<R> db(String sql, List<Object> params, FunEx<PreparedStatement, R> fun, int key) {
-        Optional<R> result = Optional.empty();
-        try (PreparedStatement pr = connection.prepareStatement(sql, key)) {
-            this.forIndex(
-                    params,
-                    (index, value) -> {
-                        dispatch.get(value.getClass()).accept(index + 1, pr, value);
-                    }
-            );
-            result = Optional.of(fun.apply(pr));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    private <R> Optional<R> db(String sql, List<Object> params, FunEx<PreparedStatement, R> fun) {
-        return this.db(sql, params, fun, Statement.NO_GENERATED_KEYS);
-    }
-
-    private <R> void db(String sql, List<Object> params, ConEx<PreparedStatement> fun, int key) {
-        this.db(
-                sql, params,
-                ps -> {
-                    fun.accept(ps);
-                    return Optional.empty();
-                }, key
-        );
-    }
-
-    private <R> void db(String sql, List<Object> params, ConEx<PreparedStatement> fun) {
-        this.db(sql, params, fun, Statement.NO_GENERATED_KEYS);
+        this.db = new DBHelper(connection, LogManager.getLogger(TrackerSQL.class));
     }
 
     /**
@@ -65,7 +23,7 @@ public class TrackerSQL implements AutoCloseable {
      * @return ссылка на созданную заявку
      */
     public Item add(Item item) {
-        this.db(
+        db.query(
                 "insert into items (name, \"desc\") values (?, ?)",
                 Arrays.asList(item.getName(), item.getDesc()),
                 ps -> {
@@ -87,7 +45,7 @@ public class TrackerSQL implements AutoCloseable {
      * @param newItem новая заявка
      */
     public void replace(int id, Item newItem) {
-        this.db(
+        db.query(
                 "update items set name=?, \"desc\"=? where id=?",
                 Arrays.asList(newItem.getName(), newItem.getDesc(), id),
                 ps -> {
@@ -101,7 +59,7 @@ public class TrackerSQL implements AutoCloseable {
      * @param id Уникальный ключ заявки
      */
     public void delete(int id) {
-        this.db(
+        db.query(
                 "delete from items where id = ?",
                 Arrays.asList(id),
                 ps -> {
@@ -117,7 +75,7 @@ public class TrackerSQL implements AutoCloseable {
      */
     public List<Item> findAll() {
         final List<Item> result = new ArrayList<>();
-        this.db(
+        db.query(
                 "select * from items", Arrays.asList(),
                 ps -> {
                     try (final ResultSet rs = ps.executeQuery()) {
@@ -137,7 +95,7 @@ public class TrackerSQL implements AutoCloseable {
      * @return массив заявок
      */
     public List<Item> findByName(String key) {
-        return this.db(
+        return db.query(
                 "select * from items where name like ? escape '!'",
                 Arrays.asList("%" + key + "%"),
                 ps -> {
@@ -166,7 +124,7 @@ public class TrackerSQL implements AutoCloseable {
      * @return Заявка
      */
     public Item findById(int id) {
-        return this.db(
+        return db.query(
                 "select * from items where id = ?",
                 Arrays.asList(id),
                 ps -> {
@@ -186,10 +144,12 @@ public class TrackerSQL implements AutoCloseable {
         ).orElse(null);
     }
 
+    /**
+     * Закрытие
+     * @throws Exception
+     */
     @Override
     public void close() throws Exception {
-        if (!connection.isClosed()) {
-            connection.close();
-        }
+        db.close();
     }
 }

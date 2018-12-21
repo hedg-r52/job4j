@@ -1,4 +1,4 @@
-package ru.job4j.jdbc.tracker;
+package functional;
 
 public interface BiConEx<L, R> {
     void accept(L left, R right) throws Exception;
