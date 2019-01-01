@@ -14,6 +14,7 @@
      </properties>
 
     <modules>
+        <module>utils</module>
         <module>chapter_001</module>
         <module>chapter_002</module>
         <module>chapter_002_IO</module>
@@ -23,7 +24,6 @@
         <module>chapter_005</module>
         <module>chapter_006</module>
         <module>SqlRuParser</module>
-        <module>utils</module>
     </modules>
 
     <profiles>
