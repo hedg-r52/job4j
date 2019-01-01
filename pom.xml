@@ -23,6 +23,7 @@
         <module>chapter_006</module>
         <module>SqlRuParser</module>
         <module>utils</module>
+        <module>chapter_002_IO</module>
     </modules>
 
     <profiles>
@@ -53,15 +54,6 @@
                 <db.url>jdbc:postgresql://localhost/tracker</db.url>
                 <db.username>postgres</db.username>
                 <db.password></db.password>
-                <db.driver>org.postgresql.Driver</db.driver>
-            </properties>
-        </profile>
-        <profile>
-            <id>sqlparser</id>
-            <properties>
-                <db.url>jdbc:postgresql://127.0.0.1:5432/sqlru</db.url>
-                <db.username>postgres</db.username>
-                <db.password>postgres</db.password>
                 <db.driver>org.postgresql.Driver</db.driver>
             </properties>
         </profile>
