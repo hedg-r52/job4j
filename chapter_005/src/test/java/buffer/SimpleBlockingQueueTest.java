@@ -1,6 +1,7 @@
 package buffer;
 
 import notify.SimpleBlockingQueue;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -12,7 +13,7 @@ import static org.junit.Assert.*;
 
 
 public class SimpleBlockingQueueTest {
-    @Test
+    @Test @Ignore
     public void whenFetchAllThenGetIt() throws InterruptedException {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
         final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
