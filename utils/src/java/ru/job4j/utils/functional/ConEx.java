@@ -1,4 +1,4 @@
-package functional;
+package ru.job4j.utils.functional;
 
 /**
  * Function interface. It take a single param.

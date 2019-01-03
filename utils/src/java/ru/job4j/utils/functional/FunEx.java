@@ -1,4 +1,4 @@
-package functional;
+package ru.job4j.utils.functional;
 
 /**
  * Funcation interface. It takes param and return data.

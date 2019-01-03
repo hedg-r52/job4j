@@ -1,9 +1,9 @@
-package jdbc;
+package ru.job4j.utils.jdbc;
 
-import functional.*;
 import java.sql.*;
 import java.util.*;
 import org.apache.log4j.*;
+import ru.job4j.utils.functional.*;
 
 public class DBHelper implements AutoCloseable {
     private final Connection connection;

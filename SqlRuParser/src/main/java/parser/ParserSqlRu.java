@@ -1,6 +1,6 @@
 package parser;
 
-import jdbc.DBHelper;
+import ru.job4j.utils.jdbc.DBHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.Elements;

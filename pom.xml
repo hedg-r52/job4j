@@ -58,7 +58,6 @@
             </properties>
         </profile>
     </profiles>
-
     <dependencies>
         <dependency>
             <groupId>org.hamcrest</groupId>

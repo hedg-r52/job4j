@@ -1,6 +1,6 @@
 package ru.job4j.jdbc.tracker;
 
-import jdbc.DBHelper;
+import ru.job4j.utils.jdbc.DBHelper;
 import org.apache.log4j.LogManager;
 import java.sql.*;
 import java.util.*;
