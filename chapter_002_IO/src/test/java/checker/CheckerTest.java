@@ -1,11 +1,7 @@
 package checker;
 
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
+import java.io.*;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -34,4 +30,33 @@ public class CheckerTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void whenInStreamEnglishThenGetOutStreamWithoutAbuseWords() {
+        String[] abuse = {"second", "fourth"};
+        testDropAbuse(
+                "first second third fourth fifth", "first third fifth", abuse
+        );
+    }
+
+    @Test
+    public void whenInStreamRussianThenGetOutStreamWithoutAbuseWords() {
+        String[] abuse = {"второй", "четвертый"};
+        testDropAbuse(
+                "первый второй третий четвертый пятый", "первый третий пятый", abuse
+        );
+    }
+
+    private void testDropAbuse(String input, String expected, String[] abuse) {
+        Checker checker = new Checker();
+        try (
+                InputStream in = new ByteArrayInputStream(input.getBytes());
+                OutputStream out = new ByteArrayOutputStream()) {
+            checker.dropAbuses(in, out, abuse);
+            assertThat(out.toString().trim(), is(expected));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
