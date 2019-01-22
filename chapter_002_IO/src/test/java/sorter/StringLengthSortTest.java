@@ -43,15 +43,6 @@ public class StringLengthSortTest {
         }
     }
 
-    @Test
-    public void whenSortThenCountLinesOutFilesEqualsCountLinesInFile() throws Exception {
-        StringLengthSort sort = new StringLengthSort(3);
-        File in = new File(IN);
-        File out = new File(OUT);
-        sort.sort(in, out);
-        assertThat((int) Files.lines(Paths.get(OUT)).count(), is(countLines));
-    }
-
     @After
     public void tearDown() throws Exception {
         Files.deleteIfExists(Paths.get(IN));
