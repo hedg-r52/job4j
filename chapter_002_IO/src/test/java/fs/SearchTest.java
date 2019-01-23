@@ -63,6 +63,31 @@ public class SearchTest {
         assertThat(result.size(), is(0));
     }
 
+    //
+    @Test
+    public void whenFilesNoRecursionTxtThenGet30Values() {
+        List result = search.filesNoRecursion(path, Arrays.asList("txt"));
+        assertThat(result.size(), is(30));
+    }
+
+    @Test
+    public void whenFilesNoRecursionTmpThenGet30Values() {
+        List result = search.filesNoRecursion(path, Arrays.asList("tmp"));
+        assertThat(result.size(), is(30));
+    }
+
+    @Test
+    public void whenFilesNoRecursionTxtAndTmpThenGet60Values() {
+        List result = search.filesNoRecursion(path, Arrays.asList("txt", "tmp"));
+        assertThat(result.size(), is(60));
+    }
+
+    @Test
+    public void whenFilesNoRecursionIniThenGetNoValues() {
+        List result = search.filesNoRecursion(path, Arrays.asList("ini"));
+        assertThat(result.size(), is(0));
+    }
+
     @After
     public void tearDown() throws Exception {
         for (int i = 0; i < count; i++) {
