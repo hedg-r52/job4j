@@ -44,14 +44,14 @@ public class ConsoleChatTest {
     }
 
     @Test
-    public void whenCheckPhrasesContainsReceivedStringsAndCountEqualsTwo() throws Exception {
+    public void whenCheckPhrasesContainsReceivedStringsAndCountEqualsThree() throws Exception {
         ConsoleChat chat = new ConsoleChat(
                 filename,
                 new StubInput(new String[] {"привет", "стоп", "тест", "продолжить", "тест", "закончить"})
         );
         chat.start();
         int count = 0;
-        int expected = 2;
+        int expected = 3;
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray());
              InputStreamReader inputStreamReader = new InputStreamReader(byteArrayInputStream);
              BufferedReader br = new BufferedReader(inputStreamReader)) {
