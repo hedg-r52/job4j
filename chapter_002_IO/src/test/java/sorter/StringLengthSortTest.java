@@ -17,7 +17,7 @@ public class StringLengthSortTest {
     private final static String IN = TMP_DIR + System.getProperty("file.separator") + "in.txt";
     private final static String OUT = TMP_DIR + System.getProperty("file.separator") + "out.txt";
     private final int lineLength = 40;
-    private final int countLines = 10;
+    private final int countLines = 1000;
 
     @Before
     public void setUp() throws IOException {
@@ -27,7 +27,7 @@ public class StringLengthSortTest {
 
     @Test
     public void whenSortThenNextStringLengthMoreOrEquals() throws Exception {
-        StringLengthSort sort = new StringLengthSort(3);
+        StringLengthSort sort = new StringLengthSort(100);
         File in = new File(IN);
         File out = new File(OUT);
         sort.sort(in, out);
