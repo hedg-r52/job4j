@@ -12,11 +12,10 @@ import java.util.function.BiConsumer;
  * @since 0.1
  */
 public class InteractCalculator {
-    private final Calculator calc;
+    protected final Calculator calc;
     private final Scanner scanner;
-    private Double result;
-    private boolean valid;
-    private Map<String, BiConsumer<Double, Double>> operations = new HashMap<>();
+    protected Double result;
+    protected Map<String, BiConsumer<Double, Double>> operations = new HashMap<>();
 
     /**
      * Constructor
@@ -31,7 +30,7 @@ public class InteractCalculator {
     /**
      * Init calculator's operations
      */
-    private void initOperations() {
+    protected void initOperations() {
         this.load("+", handleAdd());
         this.load("-", handleSub());
         this.load("/", handleDiv());
@@ -43,7 +42,7 @@ public class InteractCalculator {
      * @param op
      * @param handle
      */
-    private void load(String op, BiConsumer<Double, Double> handle) {
+    protected void load(String op, BiConsumer<Double, Double> handle) {
         this.operations.put(op, handle);
     }
 
@@ -97,22 +96,23 @@ public class InteractCalculator {
      *
      *  Split expression by space and get three parts
      */
-    public void execute(String expression) {
-        this.valid = this.isValid(expression);
-        if (this.valid) {
+    public boolean execute(String expression) {
+        boolean valid = this.isValid(expression);
+        if (valid) {
             String[] parts = expression.split(" ");
             this.operations.get(parts[1]).accept(
                     Double.valueOf(parts[0]),
                     Double.valueOf(parts[2])
             );
         }
+        return valid;
     }
 
     /**
      * print  result to console
      */
-    private void printResult() {
-        if (this.valid) {
+    private void printResult(boolean valid) {
+        if (valid) {
             System.out.println(this.result);
         } else {
             System.out.println("Wrong expression!");
@@ -124,7 +124,7 @@ public class InteractCalculator {
      * @param expression
      * @return
      */
-    private boolean isValid(String expression) {
+    protected boolean isValid(String expression) {
         boolean result = true;
         String[] parts = expression.split(" ");
         result = result && (parts.length == 3);
@@ -138,8 +138,8 @@ public class InteractCalculator {
     public void run() {
         String input = scanner.nextLine();
         while (!"q".equals(input)) {
-            this.execute(input);
-            this.printResult();
+            boolean valid = this.execute(input);
+            this.printResult(valid);
             input = scanner.nextLine();
         }
     }
