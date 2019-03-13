@@ -1,12 +1,10 @@
 package netmanager;
 
 import ru.job4j.utils.config.Config;
-
 import java.io.*;
-import java.net.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
@@ -18,37 +16,68 @@ import java.util.stream.Stream;
  */
 public class NetFileServer {
     private final static String CONFIG_FILE = "app.properties";
+    private final static String LN = System.getProperty("line.separator");
     private final static String FS = System.getProperty("file.separator");
     private final Socket socket;
     private final Map<String, BiFunction<String, String, Command>> commands = new HashMap<>();
-    private final PrintWriter out;
-    private final BufferedReader in;
-    private final DataInputStream dis;
+    private final DataOutputStream out;
+    private final DataInputStream in;
     private final String root;
     private Command status;
     private String currentDir;
 
+    /**
+     * Constructor
+     * @param socket
+     * @param root root directory
+     * @throws IOException
+     */
     public NetFileServer(Socket socket, String root) throws IOException {
         this.socket = socket;
         this.root = root;
         this.currentDir = root;
         this.status = Command.IDLE;
-        out = new PrintWriter(this.socket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-        dis = new DataInputStream(this.socket.getInputStream());
+        out = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
+        in = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
         this.init();
     }
 
+    /**
+     * Constructor
+     * @param socket
+     * @throws IOException
+     */
+    public NetFileServer(Socket socket) throws IOException {
+        this(socket, com.google.common.io.Files.createTempDir().getAbsolutePath());
+    }
+
+    /**
+     * Method to start entry of NetFileServer
+     * @throws IOException
+     */
     public void start() throws IOException {
-        String line;
+        byte[] buffer;
         do {
-            line = in.readLine();
-            String[] args = line.split(" ", 2);
-            String param = (args.length > 1 ? args[1] : "");
-            status = this.action(args[0].toUpperCase(), param);
+            buffer = new byte[4096];
+            in.read(buffer);
+            String[] requests = new String(buffer).trim().split(LN);
+            for (String request : requests) {
+                String[] args = request.split(" ", 2);
+                String param = (args.length > 1 ? args[1] : "");
+                status = this.action(args[0].toUpperCase(), param);
+                if (status == Command.QUIT) {
+                    break;
+                }
+            }
         } while (status != Command.QUIT);
     }
 
+    /**
+     * Apply action and return command
+     * @param cmd name of command
+     * @param param param of command (may be empty
+     * @return
+     */
     private Command action(final String cmd, final String param) {
         Command result = Command.IDLE;
         if (this.commands.keySet().contains(cmd)) {
@@ -59,6 +88,9 @@ public class NetFileServer {
         return result;
     }
 
+    /**
+     * loading commands in hashmap
+     */
     private void init() {
         this.load(Command.LIST.getName(), handleGetList());
         this.load(Command.CD.getName(), handleChangeDir());
@@ -69,23 +101,43 @@ public class NetFileServer {
         this.load(Command.IDLE.getName(), handleIdle());
     }
 
+    /**
+     * put handle in hashmap
+     * @param cmd name of command
+     * @param handle handle
+     */
     private void load(String cmd, BiFunction<String, String, Command> handle) {
         this.commands.put(cmd, handle);
     }
 
-    private BiFunction<String, String, Command> handleGetList() {
+    private BiFunction<String, String, Command> handleWhere() {
         return (cmd, param) -> {
-            out.println("TEXT");
-            out.println(String.format("Current directory: %s", currentDir));
-            try (Stream<Path> paths = Files.walk(Paths.get(currentDir))) {
-                paths.forEach(p -> {
-                    String type = Files.isDirectory(p) ? "[DIR]" : "[FILE]";
-                    out.println(String.format("%6s %s", type, p.toString()));
-                });
+            try {
+                out.write(currentDir.getBytes());
+                out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            out.println();
+            return Command.WHERE;
+        };
+    }
+
+    private BiFunction<String, String, Command> handleGetList() {
+        return (cmd, param) -> {
+            StringBuilder sb = new StringBuilder();
+            try (Stream<Path> paths = Files.walk(Paths.get(currentDir))) {
+                sb.append(String.format("Current directory: %s%s", currentDir, LN));
+                paths
+                        .filter(p -> !Paths.get(currentDir).equals(p))
+                        .forEach(p -> {
+                    String type = Files.isDirectory(p) ? "[DIR]" : "[FILE]";
+                    sb.append(String.format("%6s %s%s", type, p.toString(), LN));
+                });
+                out.write(sb.toString().getBytes());
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return Command.LIST;
         };
     }
@@ -96,92 +148,122 @@ public class NetFileServer {
                 if (!root.equals(currentDir)) {
                     int position = currentDir.lastIndexOf(FS);
                     currentDir = currentDir.substring(0, position);
+                    try {
+                        out.write(String.format("Directory changed to \"%s\"", currentDir).getBytes());
+                        out.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
-                String newCurrentDir = String.format("%s%s%s", currentDir, FS, param);
-                if (Files.exists(Paths.get(newCurrentDir)) && Files.isDirectory(Paths.get(newCurrentDir))) {
-                    currentDir = String.format("%s%s%s", currentDir, FS, param);
-                } else {
-                    out.println("Directory does not exist");
+                try {
+                    String newCurrentDir = String.format("%s%s%s", currentDir, FS, param);
+                    if (Files.exists(Paths.get(newCurrentDir)) && Files.isDirectory(Paths.get(newCurrentDir))) {
+                        currentDir = String.format("%s%s%s", currentDir, FS, param);
+                        out.write(String.format("Directory changed to \"%s\"", currentDir).getBytes());
+                    } else {
+                        out.write("Directory does not exist".getBytes());
+                    }
+                    out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-            out.println("");
             return Command.CD;
         };
     }
 
     private BiFunction<String, String, Command> handleDownload() {
-        // TODO download
         return (cmd, param) -> {
-            out.println("");
+            // check if file exist
+            try {
+                String path = currentDir + FS + param;
+                long size = Files.size(Paths.get(path));
+                out.write(String.format("OK %s", size).getBytes());
+                out.flush();
+                sendFileToSocket(path, size);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return Command.DOWNLOAD;
         };
     }
 
     private BiFunction<String, String, Command> handleUpload() {
         return (cmd, param) -> {
-            out.println(String.format("DATAUPLOAD %s", param));
-            String filename = param.substring(param.lastIndexOf(FS) + 1);
-            try {
-                saveFileFromSocket(currentDir + FS + filename);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            int lastSpace = param.lastIndexOf(" ");
+            String path = param.substring(0, lastSpace);
+            String filename = path.substring(path.lastIndexOf(FS) + 1);
+            long size = Long.parseLong(param.substring(lastSpace + 1));
+            saveFileFromSocket(filename, size);
             return Command.UPLOAD;
         };
     }
 
-    /**
-     * Save file from socket
-     *   first, read size of bytes
-     *   then read data
-     * @param filename name of new file
-     * @throws IOException
-     */
-    private void saveFileFromSocket(String filename) throws IOException {
-        int size = Integer.valueOf(in.readLine());
-        out.println("OK");
-        int count;
-        int totalRead = 0;
-        int remaining = size;
-        byte[] buffer = new byte[4096];
-        try (FileOutputStream fos = new FileOutputStream(filename)) {
-            while ((count = dis.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
-                totalRead += count;
-                remaining -= count;
-                System.out.println("read " + totalRead + " bytes.");
-                fos.write(buffer, 0, count);
-            }
-        }
-    }
-
     private BiFunction<String, String, Command> handleQuit() {
-        return (cmd, param) -> {
-            out.println();
-            return Command.QUIT;
-        };
+        return (cmd, param) -> Command.QUIT;
     }
 
     private BiFunction<String, String, Command> handleIdle() {
-        return  (cmd, param) -> {
-            out.println("");
-            return Command.IDLE;
-        };
+        return (cmd, param) -> Command.IDLE;
     }
 
-    private BiFunction<String, String, Command> handleWhere() {
-        return  (cmd, param) -> {
-            out.println(currentDir);
-            out.println();
-            return Command.WHERE;
-        };
+    /**
+     * Send file from disk to socket
+     * @param filename full path to file
+     * @param size size of sending file
+     * @throws IOException
+     */
+    private void sendFileToSocket(String filename, long size) throws IOException {
+        int count;
+        int totalRead = 0;
+        long remaining = size;
+        byte[] buffer = new byte[4096];
+        try (FileInputStream fis = new FileInputStream(filename)) {
+            while ((count = fis.read(buffer, 0, (int) Math.min(buffer.length, remaining))) > 0) {
+                totalRead += count;
+                remaining -= count;
+                out.write(buffer, 0, count);
+                out.flush();
+            }
+            System.out.println("send " + totalRead + " bytes.");
+        }
+    }
+
+    /**
+     * Save file from socket
+     * @param filename full path to file
+     * @param size size of sending file
+     */
+    private void saveFileFromSocket(String filename, long size) {
+        int count;
+        int totalWrite = 0;
+        long remaining = size;
+        byte[] buffer = new byte[4096];
+        try (FileOutputStream fos = new FileOutputStream(currentDir + FS + filename)) {
+            out.write("OK".getBytes());
+            out.flush();
+            while ((count = in.read(buffer, 0, (int) Math.min(buffer.length, remaining))) > 0) {
+                totalWrite += count;
+                remaining -= count;
+                fos.write(buffer, 0, count);
+            }
+            System.out.println("write " + totalWrite + " bytes.");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exec(String dir) {
+
     }
 
     public static void main(String[] args) throws IOException {
         Config config = new Config(CONFIG_FILE);
-        int port = Integer.valueOf(config.get("server.port"));
-        try (Socket socket = new ServerSocket(port).accept()) {
-            new NetFileServer(socket, "E:\\Temp\\server").start();
+        try (Socket socket = new ServerSocket(Integer.valueOf(config.get("server.port"))).accept()) {
+            new NetFileServer(socket).start();
         }
     }
 }
