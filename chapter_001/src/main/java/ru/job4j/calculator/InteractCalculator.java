@@ -51,10 +51,7 @@ public class InteractCalculator {
      * @return BiConsumer
      */
     private BiConsumer<Double, Double> handleAdd() {
-        return (first, second) -> {
-            calc.add(first, second);
-            this.result = calc.getResult();
-        };
+        return calc::add;
     }
 
     /**
@@ -62,10 +59,7 @@ public class InteractCalculator {
      * @return BiConsumer
      */
     private BiConsumer<Double, Double> handleSub() {
-        return (first, second) -> {
-            calc.subtract(first, second);
-            this.result = calc.getResult();
-        };
+        return calc::subtract;
     }
 
     /**
@@ -73,10 +67,7 @@ public class InteractCalculator {
      * @return BiConsumer
      */
     private BiConsumer<Double, Double> handleDiv() {
-        return (first, second) -> {
-            calc.div(first, second);
-            this.result = calc.getResult();
-        };
+        return calc::div;
     }
 
     /**
@@ -84,10 +75,7 @@ public class InteractCalculator {
      * @return BiConsumer
      */
     private BiConsumer<Double, Double> handleMul() {
-        return (first, second) -> {
-            calc.multiple(first, second);
-            this.result = calc.getResult();
-        };
+        return calc::multiple;
     }
 
     /**
@@ -104,6 +92,7 @@ public class InteractCalculator {
                     Double.valueOf(parts[0]),
                     Double.valueOf(parts[2])
             );
+            this.result = calc.getResult();
         }
         return valid;
     }
