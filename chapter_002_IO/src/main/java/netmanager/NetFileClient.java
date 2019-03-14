@@ -1,12 +1,14 @@
 package netmanager;
 
 import ru.job4j.utils.config.Config;
+
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.Scanner;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author Andrei Solovev (hedg.r52@gmail.com)
@@ -22,31 +24,34 @@ public class NetFileClient {
     private final String root;
     private final DataOutputStream out;
     private final DataInputStream in;
-    private Command status;
-    private final Map<String, BiFunction<String, String, Command>> commands = new HashMap<>();
+    private final RequestParser requestParser = RequestParser.getRequestParser();
+    private final SocketHelper socketHelper;
+    private final Map<String, Function<String, Command>> commands = new HashMap<>();
 
     /**
      * Constructor
+     *
      * @param socket
-     * @param root root directory
+     * @param root   root directory
      * @throws IOException
      */
     public NetFileClient(Socket socket, String root) throws IOException {
         this.socket = socket;
         this.root = root;
-        this.status = Command.IDLE;
         out = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
         in = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
+        this.socketHelper = new SocketHelper(this.in, this.out);
         this.init();
     }
 
     /**
      * Constructor
+     *
      * @param socket
      * @throws IOException
      */
     public NetFileClient(Socket socket) throws IOException {
-        this(socket,  com.google.common.io.Files.createTempDir().getAbsolutePath());
+        this(socket, com.google.common.io.Files.createTempDir().getAbsolutePath());
     }
 
     /**
@@ -54,208 +59,191 @@ public class NetFileClient {
      */
     public void start() {
         Scanner scanner = new Scanner(System.in);
+        Command status = Command.IDLE;
         String request;
         do {
             System.out.printf(PROMPT);
             request = scanner.nextLine();
-            String[] args = request.split(" ", 2);
-            String param = (args.length > 1 ? args[1] : "");
-            status = this.action(args[0].toUpperCase(), param);
+            requestParser.parse(request);
+            status = this.action(requestParser.getCommand(), requestParser.getParam());
         } while (status != Command.QUIT);
     }
 
     /**
      * Apply action and return command
-     * @param cmd name of command
+     *
+     * @param cmd   name of command
      * @param param param of command (may be empty
      * @return
      */
     private Command action(final String cmd, final String param) {
-        Command result = Command.IDLE;
-        if (this.commands.keySet().contains(cmd)) {
-            result = this.commands.get(cmd).apply(cmd, param);
-        } else {
-            this.commands.get(Command.IDLE.getName()).apply(Command.IDLE.getName(), "");
-        }
-        return result;
+        return (this.commands.keySet().contains(cmd)
+                ? this.commands.get(cmd).apply(param)
+                : this.commands.get(Command.IDLE.getName()).apply("")
+        );
     }
 
     /**
      * loading commands in hashmap
      */
     private void init() {
-        this.load(Command.WHERE.getName(), handleWhere());
-        this.load(Command.LIST.getName(), handleGetList());
-        this.load(Command.CD.getName(), handleChangeDir());
-        this.load(Command.DOWNLOAD.getName(), handleDownload());
-        this.load(Command.UPLOAD.getName(), handleUpload());
-        this.load(Command.IDLE.getName(), handleIdle());
-        this.load(Command.QUIT.getName(), handleQuit());
+        this.load(Command.WHERE.getName(), this::where);
+        this.load(Command.LIST.getName(), this::getList);
+        this.load(Command.CD.getName(), this::changeDir);
+        this.load(Command.DOWNLOAD.getName(), this::download);
+        this.load(Command.UPLOAD.getName(), this::upload);
+        this.load(Command.IDLE.getName(), this::idle);
+        this.load(Command.QUIT.getName(), this::quit);
     }
 
     /**
      * put handle in hashmap
-     * @param cmd name of command
+     *
+     * @param cmd    name of command
      * @param handle handle
      */
-    private void load(String cmd, BiFunction<String, String, Command> handle) {
+    private void load(String cmd, Function<String, Command> handle) {
         this.commands.put(cmd, handle);
     }
 
-    private BiFunction<String, String, Command> handleWhere() {
-        return  (cmd, param) -> {
-            try {
-                byte[] buffer = new byte[4096];
-                out.write(Command.WHERE.getName().getBytes());
-                out.flush();
-                in.read(buffer);
-                String line = new String(buffer);
-                System.out.printf("Current directory: %s%s", line, LN);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Command.WHERE;
-        };
-    }
-
-    private BiFunction<String, String, Command> handleGetList() {
-        return (cmd, param) -> {
-            try {
-                byte[] buffer = new byte[4096];
-                out.write(Command.LIST.getName().getBytes());
-                out.flush();
-                in.read(buffer);
-                String line = new String(buffer);
-                System.out.print(line);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Command.LIST;
-        };
-    }
-
-    private BiFunction<String, String, Command> handleChangeDir() {
-        return (cmd, param) -> {
-            try {
-                byte[] buffer = new byte[4096];
-                out.write(String.format("%s %s", Command.CD.getName(), param).getBytes());
-                out.flush();
-                in.read(buffer);
-                String line = new String(buffer);
-                System.out.println(line);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Command.LIST;
-        };
-    }
-
-    private BiFunction<String, String, Command> handleDownload() {
-        return (cmd, param) -> {
-            try {
-                byte[] buffer = new byte[4096];
-                out.write(String.format("%s %s", Command.DOWNLOAD.getName(), param).getBytes());
-                out.flush();
-                in.read(buffer);
-                String line = new String(buffer);
-                if ("OK".equals(line.split(" ", 2)[0])) {
-                    String filename = param.substring(param.lastIndexOf(FS) + 1);
-                    long size = Long.parseLong(line.split(" ")[1]);
-                    saveFileFromSocket(filename, size);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Command.DOWNLOAD;
-        };
-    }
-
-    private BiFunction<String, String, Command> handleUpload() {
-        return (cmd, param) -> {
-            try {
-                byte[] buffer = new byte[4096];
-                String filename = getFilename(param);
-                long size = Files.size(Paths.get(filename));
-                out.write(String.format("%s %s %s", Command.UPLOAD.getName(), param, size).getBytes());
-                out.flush();
-                in.read(buffer);
-                String line = new String(buffer);
-                if ("OK".equals(line.split(" ", 2)[0])) {
-                    sendFileToSocket(filename, size);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Command.UPLOAD;
-        };
-    }
-
-    private BiFunction<String, String, Command> handleQuit() {
-        return (cmd, param) -> {
-            try {
-                out.write(Command.QUIT.getName().getBytes());
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return Command.QUIT;
-        };
-    }
-
-    private BiFunction<String, String, Command> handleIdle() {
-        return (cmd, param) -> Command.IDLE;
-    }
 
     /**
-     * Save file from socket
-     * @param filename full path to file
-     * @param size size of sending file
-     * @throws IOException
+     * Send command WHERE and get current directory
+     *
+     * @param param
+     * @return
      */
-    private void saveFileFromSocket(String filename, long size) throws IOException {
-        int count;
-        int totalWrite = 0;
-        long remaining = size;
-        byte[] buffer = new byte[4096];
-        try (FileOutputStream fos = new FileOutputStream(root + FS + filename)) {
-            while ((count = in.read(buffer, 0, (int) Math.min(buffer.length, remaining))) > 0) {
-                totalWrite += count;
-                remaining -= count;
-                fos.write(buffer, 0, count);
-            }
-            System.out.println("write " + totalWrite + " bytes.");
-        }
-    }
-
-    /**
-     * Send file from disk to socket
-     * @param filename full path to file
-     * @param size size of sending fil
-     * @throws IOException
-     */
-    private void sendFileToSocket(String filename, long size) throws IOException {
+    private Command where(String param) {
         try {
-            int count;
-            int totalRead = 0;
-            long remaining = size;
             byte[] buffer = new byte[4096];
-            try (FileInputStream fis = new FileInputStream(filename)) {
-                while ((count = fis.read(buffer, 0, (int) Math.min(buffer.length, remaining))) > 0) {
-                    totalRead += count;
-                    remaining -= count;
-                    out.write(buffer, 0, count);
-                    out.flush();
-                }
-                System.out.println("send " + totalRead + " bytes.");
+            out.write(Command.WHERE.getName().getBytes());
+            out.flush();
+            in.read(buffer);
+            String line = new String(buffer);
+            System.out.printf("Current directory: %s%s", line, LN);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Command.WHERE;
+    }
+
+    /**
+     * Send command LIST for get list of files/dirs current directory
+     *
+     * @param param
+     * @return
+     */
+    private Command getList(String param) {
+        try {
+            byte[] buffer = new byte[4096];
+            out.write(Command.LIST.getName().getBytes());
+            out.flush();
+            in.read(buffer);
+            String line = new String(buffer);
+            System.out.print(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Command.LIST;
+    }
+
+    /**
+     * Send command CD for change directory
+     *
+     * @param param
+     * @return
+     */
+    private Command changeDir(String param) {
+        try {
+            byte[] buffer = new byte[4096];
+            out.write(String.format("%s %s", Command.CD.getName(), param).getBytes());
+            out.flush();
+            in.read(buffer);
+            String line = new String(buffer);
+            System.out.println(line);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Command.LIST;
+    }
+
+    /**
+     * Send command DOWNLOAD to download file
+     *
+     * @param param
+     * @return
+     */
+    private Command download(String param) {
+        try {
+            byte[] buffer = new byte[4096];
+            out.write(String.format("%s %s", Command.DOWNLOAD.getName(), param).getBytes());
+            out.flush();
+            in.read(buffer);
+            String line = new String(buffer);
+            if ("OK".equals(line.split(" ", 2)[0])) {
+                String filename = param.substring(param.lastIndexOf(FS) + 1);
+                long size = Long.parseLong(line.split(" ")[1]);
+                socketHelper.saveFileFromSocket(filename, size);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return Command.DOWNLOAD;
+    }
+
+    /**
+     * Send command UPLOAD to upload file
+     *
+     * @param param
+     * @return
+     */
+    private Command upload(String param) {
+        try {
+            byte[] buffer = new byte[4096];
+            String filename = getFilename(param);
+            long size = Files.size(Paths.get(filename));
+            out.write(String.format("%s %s %s", Command.UPLOAD.getName(), param, size).getBytes());
+            out.flush();
+            in.read(buffer);
+            String line = new String(buffer);
+            if ("OK".equals(line.split(" ", 2)[0])) {
+                socketHelper.sendFileToSocket(filename, size);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Command.UPLOAD;
+    }
+
+    /**
+     * Send command QUIT for exit from main loop
+     *
+     * @param param
+     * @return
+     */
+    private Command quit(String param) {
+        try {
+            out.write(Command.QUIT.getName().getBytes());
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Command.QUIT;
+    }
+
+    /**
+     * Idle operation
+     *
+     * @param param
+     * @return
+     */
+    private Command idle(String param) {
+        return Command.IDLE;
     }
 
     /**
      * Get filename
-     *
+     * <p>
      * If filename contains file separator, it's absolutely path,
      * if not - specified file's directory is root directory of client app
      *
