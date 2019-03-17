@@ -23,6 +23,7 @@
         <module>chapter_004_FP</module>
         <module>chapter_005</module>
         <module>chapter_006</module>
+        <module>chapter_007</module>
         <module>SqlRuParser</module>
         <module>pack</module>
     </modules>
