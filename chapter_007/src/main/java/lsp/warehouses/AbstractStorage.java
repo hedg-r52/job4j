@@ -1,6 +1,8 @@
 package lsp.warehouses;
 
 import lsp.foods.Food;
+import lsp.foods.IFood;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,11 +15,11 @@ import java.util.List;
  * @version 0.1
  */
 public abstract class AbstractStorage {
-    protected List<Food> foods = new ArrayList<>();
+    protected List<IFood> foods = new ArrayList<>();
 
-    public boolean add(Food food) {
+    public boolean add(IFood food) {
         return foods.add(food);
     }
 
-    public abstract boolean isSuitable(Food food, Date currentDate);
+    public abstract boolean isSuitable(IFood food, Date currentDate);
 }

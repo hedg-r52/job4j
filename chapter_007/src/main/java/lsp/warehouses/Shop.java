@@ -1,6 +1,6 @@
 package lsp.warehouses;
 
-import lsp.foods.Food;
+import lsp.foods.IFood;
 import java.util.Date;
 
 /**
@@ -16,7 +16,7 @@ public class Shop extends AbstractStorage {
     public static final int LOWER_BOUND_THRESHOLD = 25;
 
     @Override
-    public boolean isSuitable(Food food, Date currentDate) {
+    public boolean isSuitable(IFood food, Date currentDate) {
         return food.getDaysOfLifeInPercent(currentDate) <= UPPER_BOUND_THRESHOLD
                 && food.getDaysOfLifeInPercent(currentDate) >= LOWER_BOUND_THRESHOLD;
     }

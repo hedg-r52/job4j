@@ -7,7 +7,7 @@ import java.util.Date;
  * @since 17.03.2019
  * @version 0.1
  */
-public class Food {
+public class Food implements IFood {
     protected final String name;
     protected final Date createDate;
     protected final Date expiredDate;
@@ -36,6 +36,15 @@ public class Food {
                 / (float) (this.expiredDate.getTime() - this.createDate.getTime())) * 100);
     }
 
+    @Override
+    public boolean canReproduct() {
+        return false;
+    }
+
+    @Override
+    public boolean needColdStorage() {
+        return false;
+    }
 
 
 }

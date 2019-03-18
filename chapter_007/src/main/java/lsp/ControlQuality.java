@@ -1,6 +1,7 @@
 package lsp;
 
 import lsp.foods.Food;
+import lsp.foods.IFood;
 import lsp.warehouses.AbstractStorage;
 
 import java.util.ArrayList;
@@ -23,20 +24,20 @@ public class ControlQuality {
         storages.add(storage);
     }
 
-    public AbstractStorage checkQuality(Food food, Date currentDate) {
+    public AbstractStorage checkQuality(IFood food, Date currentDate) {
         AbstractStorage storage = this.relocate(food, currentDate);
         checkDiscount(food, currentDate);
         return storage;
     }
 
-    private void checkDiscount(Food food, Date currentDate) {
+    private void checkDiscount(IFood food, Date currentDate) {
         if (food.getDaysOfLifeInPercent(currentDate) >= LOWER_DISCOUNT_THRESHOLD
                 && food.getDaysOfLifeInPercent(currentDate) <= UPPER_DISCOUNT_THRESHOLD) {
             food.enableSale();
         }
     }
 
-    private AbstractStorage relocate(Food food, Date currentDate) {
+    private AbstractStorage relocate(IFood food, Date currentDate) {
         AbstractStorage result = null;
         for (AbstractStorage storage : storages) {
             if (storage != null && storage.isSuitable(food, currentDate)) {

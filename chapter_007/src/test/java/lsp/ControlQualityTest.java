@@ -1,12 +1,8 @@
 package lsp;
 
-import lsp.foods.Food;
-import lsp.foods.Milk;
-import lsp.foods.Pork;
-import lsp.warehouses.AbstractStorage;
-import lsp.warehouses.Shop;
-import lsp.warehouses.Trash;
-import lsp.warehouses.Warehouse;
+import lsp.foods.*;
+import lsp.foods.decorator.ReproductDecorator;
+import lsp.warehouses.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,15 +17,22 @@ public class ControlQualityTest {
     private final Shop shop = new Shop();
     private final Trash trash = new Trash();
     private final Warehouse warehouse = new Warehouse();
+    private final ColdWarehouse coldWarehouse = new ColdWarehouse();
+    private final FixCapacityStorage fixWarehouse = new FixCapacityStorage(new Warehouse(), 1);
+    private final RecyclingStorage recyclingStorage = new RecyclingStorage();
+
     private Date currentDate;
 
     @Before
     public void init() {
         calendar.set(2019, 3, 17, 0, 0, 0);
         currentDate = calendar.getTime();
-        controllQuality.addStorage(trash);
-        controllQuality.addStorage(shop);
+        controllQuality.addStorage(coldWarehouse);
+        controllQuality.addStorage(fixWarehouse);
         controllQuality.addStorage(warehouse);
+        controllQuality.addStorage(shop);
+        controllQuality.addStorage(recyclingStorage);
+        controllQuality.addStorage(trash);
     }
 
     @Test
@@ -43,7 +46,7 @@ public class ControlQualityTest {
         float discount = 10.0f;
         final Food food = new Milk("milk", createDate, expireDate, price, discount);
         final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
-        assertTrue(storage != null && storage.equals(warehouse) && food.getPrice() == price);
+        assertTrue(storage != null && storage.equals(fixWarehouse) && food.getPrice() == price);
     }
 
     @Test
@@ -85,6 +88,48 @@ public class ControlQualityTest {
         assertTrue(storage != null && storage.equals(trash) && food.getPrice() == price);
     }
 
+    @Test
+    public void testFixCapacityWarehouse() {
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        Date createDate = calendar.getTime();
+        calendar.set(Calendar.MONTH, 3);
+        calendar.set(Calendar.DAY_OF_MONTH, 23);
+        Date expireDate = calendar.getTime();
+        float price = 50.0f;
+        float discount = 10.0f;
+        final Food milk = new Milk("milk", createDate, expireDate, price, discount);
+        final AbstractStorage storageOne = controllQuality.checkQuality(milk, currentDate);
+        final Food pork = new Pork("pork", createDate, expireDate, price, discount);
+        final AbstractStorage storageTwo = controllQuality.checkQuality(pork, currentDate);
+        assertTrue(storageOne != null && storageOne.equals(fixWarehouse) && milk.getPrice() == price);
+        assertTrue(storageTwo != null && storageTwo.equals(warehouse) && pork.getPrice() == price);
+    }
 
+    @Test
+    public void testRecyclingStorage() {
+        calendar.set(Calendar.DAY_OF_MONTH, 8);
+        Date createDate = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        Date expaireDate = calendar.getTime();
+        float price = 50.0f;
+        float discount = 10.0f;
+        final IFood pork = new ReproductFood(new Pork("pork", createDate, expaireDate, price, discount));
+        final AbstractStorage storage = controllQuality.checkQuality(pork, currentDate);
+        assertTrue(storage != null && storage.equals(recyclingStorage) && pork.getPrice() == price);
+    }
+
+    @Test
+    public void testColdStorage() {
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        Date createDate = calendar.getTime();
+        calendar.set(Calendar.MONTH, 3);
+        calendar.set(Calendar.DAY_OF_MONTH, 23);
+        Date expireDate = calendar.getTime();
+        float price = 50.0f;
+        float discount = 10.0f;
+        final IFood food = new ColdStoreFood(new Milk("milk", createDate, expireDate, price, discount));
+        final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
+        assertTrue(storage != null && storage.equals(coldWarehouse) && food.getPrice() == price);
+    }
 
 }

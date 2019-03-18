@@ -4,18 +4,15 @@ import lsp.foods.IFood;
 import java.util.Date;
 
 /**
- * Trash
+ * Recycling storage
  *
  * @author Andrei Soloviev (hedg.r52@gmail.com)
- * @since 17.03.2019
+ * @since 18.03.2019
  * @version 0.1
  */
-public class Trash extends AbstractStorage {
-
-    private static final int TRASH_THRESHOLD = 100;
-
+public class RecyclingStorage extends Trash {
     @Override
     public boolean isSuitable(IFood food, Date currentDate) {
-        return food.getDaysOfLifeInPercent(currentDate) > TRASH_THRESHOLD;
+        return food.canReproduct() && super.isSuitable(food, currentDate);
     }
 }
