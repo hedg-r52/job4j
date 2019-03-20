@@ -1,45 +1,43 @@
 package lsp;
 
-import lsp.foods.Food;
 import lsp.foods.IFood;
-import lsp.warehouses.AbstractStorage;
+import lsp.warehouses.IStorage;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- *
+ * Control quality
  *
  * @author Andrei Soloviev (hedg.r52@gmail.com)
- * @since 17.03.2019
- * @version 0.1
+ * @since 20.03.2019
+ * @version 0.2
  */
 public class ControlQuality {
-    private final List<AbstractStorage> storages = new ArrayList<>();
-    private static final int LOWER_DISCOUNT_THRESHOLD = 75;
-    private static final int UPPER_DISCOUNT_THRESHOLD = 100;
 
-    public void addStorage(AbstractStorage storage) {
+    private final List<IStorage> storages = new ArrayList<>();
+
+    public void addStorage(IStorage storage) {
         storages.add(storage);
     }
 
-    public AbstractStorage checkQuality(IFood food, Date currentDate) {
-        AbstractStorage storage = this.relocate(food, currentDate);
+    public IStorage checkQuality(IFood food, Date currentDate) {
+        IStorage storage = this.relocate(food, currentDate);
         checkDiscount(food, currentDate);
         return storage;
     }
 
     private void checkDiscount(IFood food, Date currentDate) {
-        if (food.getDaysOfLifeInPercent(currentDate) >= LOWER_DISCOUNT_THRESHOLD
-                && food.getDaysOfLifeInPercent(currentDate) <= UPPER_DISCOUNT_THRESHOLD) {
+        if (food.getDaysOfLifeInPercent(currentDate) >= Thresholds.LOWER_DISCOUNT_THRESHOLD
+                && food.getDaysOfLifeInPercent(currentDate) <= Thresholds.UPPER_DISCOUNT_THRESHOLD) {
             food.enableSale();
         }
     }
 
-    private AbstractStorage relocate(IFood food, Date currentDate) {
-        AbstractStorage result = null;
-        for (AbstractStorage storage : storages) {
+    private IStorage relocate(IFood food, Date currentDate) {
+        IStorage result = null;
+        for (IStorage storage : storages) {
             if (storage != null && storage.isSuitable(food, currentDate)) {
                 storage.add(food);
                 result = storage;

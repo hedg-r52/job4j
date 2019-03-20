@@ -14,12 +14,12 @@ import static org.junit.Assert.*;
 public class ControlQualityTest {
     private final ControlQuality controllQuality = new ControlQuality();
     private final Calendar calendar = Calendar.getInstance();
-    private final Shop shop = new Shop();
-    private final Trash trash = new Trash();
-    private final Warehouse warehouse = new Warehouse();
-    private final ColdWarehouse coldWarehouse = new ColdWarehouse();
-    private final FixCapacityStorage fixWarehouse = new FixCapacityStorage(new Warehouse(), 1);
-    private final RecyclingStorage recyclingStorage = new RecyclingStorage();
+    private final Shop shop = new Shop(new Storage());
+    private final Trash trash = new Trash(new Storage());
+    private final Warehouse warehouse = new Warehouse(new Storage());
+    private final ColdWarehouse coldWarehouse = new ColdWarehouse(new Storage());
+    private final FixCapacityStorage fixWarehouse = new FixCapacityStorage(new Warehouse(new Storage()), 1);
+    private final RecyclingStorage recyclingStorage = new RecyclingStorage(new Storage());
 
     private Date currentDate;
 
@@ -45,7 +45,7 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final Food food = new Milk("milk", createDate, expireDate, price, discount);
-        final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
+        final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(fixWarehouse) && food.getPrice() == price);
     }
 
@@ -58,7 +58,7 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final Food food = new Pork("pork", createDate, expireDate, price, discount);
-        final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
+        final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(shop) && food.getPrice() == price);
     }
 
@@ -71,7 +71,7 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final Food food = new Pork("pork", createDate, expireDate, price, discount);
-        final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
+        final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(shop) && food.getPrice() == price - discount);
     }
 
@@ -84,7 +84,7 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final Food food = new Pork("pork", createDate, expaireDate, price, discount);
-        final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
+        final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(trash) && food.getPrice() == price);
     }
 
@@ -98,9 +98,9 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final Food milk = new Milk("milk", createDate, expireDate, price, discount);
-        final AbstractStorage storageOne = controllQuality.checkQuality(milk, currentDate);
+        final IStorage storageOne = controllQuality.checkQuality(milk, currentDate);
         final Food pork = new Pork("pork", createDate, expireDate, price, discount);
-        final AbstractStorage storageTwo = controllQuality.checkQuality(pork, currentDate);
+        final IStorage storageTwo = controllQuality.checkQuality(pork, currentDate);
         assertTrue(storageOne != null && storageOne.equals(fixWarehouse) && milk.getPrice() == price);
         assertTrue(storageTwo != null && storageTwo.equals(warehouse) && pork.getPrice() == price);
     }
@@ -114,7 +114,7 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final IFood pork = new ReproductFood(new Pork("pork", createDate, expaireDate, price, discount));
-        final AbstractStorage storage = controllQuality.checkQuality(pork, currentDate);
+        final IStorage storage = controllQuality.checkQuality(pork, currentDate);
         assertTrue(storage != null && storage.equals(recyclingStorage) && pork.getPrice() == price);
     }
 
@@ -128,7 +128,7 @@ public class ControlQualityTest {
         float price = 50.0f;
         float discount = 10.0f;
         final IFood food = new ColdStoreFood(new Milk("milk", createDate, expireDate, price, discount));
-        final AbstractStorage storage = controllQuality.checkQuality(food, currentDate);
+        final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(coldWarehouse) && food.getPrice() == price);
     }
 

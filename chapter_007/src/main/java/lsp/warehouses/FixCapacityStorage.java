@@ -1,6 +1,8 @@
 package lsp.warehouses;
 
 import lsp.foods.IFood;
+import lsp.warehouses.decorator.StorageDecorator;
+
 import java.util.Date;
 
 /**
@@ -10,16 +12,16 @@ import java.util.Date;
  * @since 18.03.2019
  * @version 0.1
  */
-public class FixCapacityStorage extends AbstractStorage {
-    private final AbstractStorage storage;
+public class FixCapacityStorage extends StorageDecorator {
     private final int capacity;
     private int size;
 
-    public FixCapacityStorage(AbstractStorage storage, int capacity) {
-        this.storage = storage;
+    public FixCapacityStorage(IStorage storage, int capacity) {
+        super(storage);
         this.capacity = capacity;
-        this.size = super.foods.size();
+        this.size = this.storage.getSize();
     }
+
 
     @Override
     public boolean add(IFood food) {

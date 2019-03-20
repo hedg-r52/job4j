@@ -1,6 +1,9 @@
 package lsp.warehouses;
 
+import lsp.Thresholds;
 import lsp.foods.IFood;
+import lsp.warehouses.decorator.StorageDecorator;
+
 import java.util.Date;
 
 /**
@@ -10,9 +13,13 @@ import java.util.Date;
  * @since 18.03.2019
  * @version 0.1
  */
-public class RecyclingStorage extends Trash {
+public class RecyclingStorage extends StorageDecorator {
+    public RecyclingStorage(IStorage storage) {
+        super(storage);
+    }
+
     @Override
     public boolean isSuitable(IFood food, Date currentDate) {
-        return food.canReproduct() && super.isSuitable(food, currentDate);
+        return food.canReproduct() && food.getDaysOfLifeInPercent(currentDate) > Thresholds.TRASH_START;
     }
 }
