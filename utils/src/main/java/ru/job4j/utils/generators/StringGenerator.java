@@ -1,5 +1,6 @@
 package ru.job4j.utils.generators;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -23,5 +24,11 @@ public class StringGenerator {
                 .limit(random.nextInt(length))
                 .collect(StringBuilder::new, (sb, i) -> sb.append((char) i), StringBuilder::append)
                 .toString();
+    }
+
+    public String getCharSequence(char symbol) {
+        char[] array = new char[this.length];
+        Arrays.fill(array, symbol);
+        return new String(array);
     }
 }
