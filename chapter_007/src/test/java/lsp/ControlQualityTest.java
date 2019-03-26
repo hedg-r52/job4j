@@ -80,10 +80,10 @@ public class ControlQualityTest {
         calendar.set(Calendar.DAY_OF_MONTH, 8);
         Date createDate = calendar.getTime();
         calendar.set(Calendar.DAY_OF_MONTH, 16);
-        Date expaireDate = calendar.getTime();
+        Date expireDate = calendar.getTime();
         float price = 50.0f;
         float discount = 10.0f;
-        final Food food = new Pork("pork", createDate, expaireDate, price, discount);
+        final Food food = new Pork("pork", createDate, expireDate, price, discount);
         final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(trash) && food.getPrice() == price);
     }
@@ -130,6 +130,25 @@ public class ControlQualityTest {
         final IFood food = new ColdStoreFood(new Milk("milk", createDate, expireDate, price, discount));
         final IStorage storage = controllQuality.checkQuality(food, currentDate);
         assertTrue(storage != null && storage.equals(coldWarehouse) && food.getPrice() == price);
+    }
+
+    @Test
+    public void testDay16WarehouseAndAfterResortDay13ShopReallocate() {
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        final Date createDate = calendar.getTime();
+        calendar.set(Calendar.MONTH, 3);
+        calendar.set(Calendar.DAY_OF_MONTH, 23);
+        final Date expireDate = calendar.getTime();
+        final float price = 50.0f;
+        final float discount = 10.0f;
+        final Food food = new Milk("milk", createDate, expireDate, price, discount);
+        assertTrue(shop.getSize() == 0 && fixWarehouse.getSize() == 0);
+        final IStorage storage = controllQuality.checkQuality(food, currentDate);
+        assertTrue(shop.getSize() == 0 && fixWarehouse.getSize() == 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 20);
+        final Date resortDate = calendar.getTime();
+        controllQuality.resort(resortDate);
+        assertTrue(shop.getSize() == 1 && fixWarehouse.getSize() == 0);
     }
 
 }
