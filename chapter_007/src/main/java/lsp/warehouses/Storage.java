@@ -30,4 +30,14 @@ public class Storage implements IStorage {
     public int getSize() {
         return this.foods.size();
     }
+
+    @Override
+    public List<IFood> getAllFood() {
+        return this.foods;
+    }
+
+    @Override
+    public void clean() {
+        this.foods = new ArrayList<>();
+    }
 }

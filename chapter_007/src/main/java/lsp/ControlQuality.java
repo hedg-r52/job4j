@@ -28,6 +28,16 @@ public class ControlQuality {
         return storage;
     }
 
+    public void resort(Date currentDate) {
+        for (IStorage storage : this.storages) {
+            List<IFood> foods = storage.getAllFood();
+            storage.clean();
+            for (IFood food : foods) {
+                this.relocate(food, currentDate);
+            }
+        }
+    }
+
     private void checkDiscount(IFood food, Date currentDate) {
         if (food.getDaysOfLifeInPercent(currentDate) >= Thresholds.LOWER_DISCOUNT_THRESHOLD
                 && food.getDaysOfLifeInPercent(currentDate) <= Thresholds.UPPER_DISCOUNT_THRESHOLD) {

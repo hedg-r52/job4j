@@ -3,6 +3,8 @@ package lsp.warehouses.decorator;
 import lsp.foods.IFood;
 import lsp.warehouses.IStorage;
 
+import java.util.List;
+
 /**
  * Storage decorator
  *
@@ -25,5 +27,15 @@ public abstract class StorageDecorator implements IStorage {
     @Override
     public int getSize() {
         return this.storage.getSize();
+    }
+
+    @Override
+    public List<IFood> getAllFood() {
+        return this.storage.getAllFood();
+    }
+
+    @Override
+    public void clean() {
+        this.storage.clean();
     }
 }
