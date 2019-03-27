@@ -15,9 +15,12 @@ import java.util.List;
  * @version 0.2
  */
 public class ControlQuality {
-
     private final List<IStorage> storages = new ArrayList<>();
 
+    /**
+     * Adding storage to collection
+     * @param storage adding storage
+     */
     public void addStorage(IStorage storage) {
         storages.add(storage);
     }
@@ -28,6 +31,10 @@ public class ControlQuality {
         return storage;
     }
 
+    /**
+     * Dynamically food resort
+     * @param currentDate date on resort
+     */
     public void resort(Date currentDate) {
         for (IStorage storage : this.storages) {
             List<IFood> foods = storage.getAllFood();
@@ -38,6 +45,13 @@ public class ControlQuality {
         }
     }
 
+    /**
+     * Check discount
+     *
+     * if days left value between upper and lower thresholds then enable sale
+     * @param food
+     * @param currentDate
+     */
     private void checkDiscount(IFood food, Date currentDate) {
         if (food.getDaysOfLifeInPercent(currentDate) >= Thresholds.LOWER_DISCOUNT_THRESHOLD
                 && food.getDaysOfLifeInPercent(currentDate) <= Thresholds.UPPER_DISCOUNT_THRESHOLD) {
@@ -45,6 +59,12 @@ public class ControlQuality {
         }
     }
 
+    /**
+     * relocate food to storage
+     * @param food food
+     * @param currentDate day of relocate
+     * @return storage
+     */
     private IStorage relocate(IFood food, Date currentDate) {
         IStorage result = null;
         for (IStorage storage : storages) {
