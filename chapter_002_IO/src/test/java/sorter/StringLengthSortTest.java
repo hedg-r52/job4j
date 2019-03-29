@@ -21,8 +21,8 @@ public class StringLengthSortTest {
 
     @Before
     public void setUp() throws IOException {
-        TextFileGenerator tfg = new TextFileGenerator(IN, lineLength, countLines);
-        tfg.generate();
+        TextFileGenerator tfg = new TextFileGenerator();
+        tfg.generate(IN, lineLength, countLines);
     }
 
     @Test

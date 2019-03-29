@@ -9,23 +9,14 @@ import java.io.IOException;
  * @since 0.1
  */
 public class TextFileGenerator {
-    private final String path;
-    private final int lines;
+    private final StringGenerator stringGenerator = new StringGenerator();
 
-    private final StringGenerator stringGenerator;
-
-    public TextFileGenerator(String path, int lineLength, int countLines) {
-        this.path = path;
-        this.lines = countLines;
-        this.stringGenerator = new StringGenerator(lineLength);
-    }
-
-    public void generate() throws IOException {
+    public void generate(String path, int countLines, int length) throws IOException {
         try (FileWriter fw = new FileWriter(path)) {
-            fw.write(stringGenerator.generate());
-            for (int i = 1; i < lines; i++) {
+            fw.write(stringGenerator.generate(length));
+            for (int i = 1; i < countLines; i++) {
                 fw.write(System.getProperty("line.separator"));
-                fw.write(stringGenerator.generate());
+                fw.write(stringGenerator.generate(length));
             }
         }
     }

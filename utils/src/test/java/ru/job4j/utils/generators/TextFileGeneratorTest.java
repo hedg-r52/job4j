@@ -19,8 +19,8 @@ public class TextFileGeneratorTest {
     public void whenGenerateThenGeneratedLinesEqualsLinesAtFile() throws IOException {
         int lineLength = 40;
         int countLines = 10;
-        TextFileGenerator tfg = new TextFileGenerator(FILE, lineLength, countLines);
-        tfg.generate();
+        TextFileGenerator tfg = new TextFileGenerator();
+        tfg.generate(FILE, lineLength, countLines);
         assertThat((int) Files.lines(Paths.get(FILE)).count(), is(countLines));
     }
 

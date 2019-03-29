@@ -9,15 +9,9 @@ import java.util.Random;
  * @since 0.1
  */
 public class StringGenerator {
-    private final int length;
-    private final Random random;
+    private final Random random = new Random();
 
-    public StringGenerator(int length) {
-        this.length = length;
-        random = new Random();
-    }
-
-    public String generate() {
+    public String generate(int length) {
         return random.ints(48, 123)
                 .filter(i -> (i < 58 || i > 64) && (i < 91 || i > 96))
                 .mapToObj(i -> (char) i)
@@ -26,8 +20,8 @@ public class StringGenerator {
                 .toString();
     }
 
-    public String getCharSequence(char symbol) {
-        char[] array = new char[this.length];
+    public String getCharSequence(char symbol, int length) {
+        char[] array = new char[length];
         Arrays.fill(array, symbol);
         return new String(array);
     }

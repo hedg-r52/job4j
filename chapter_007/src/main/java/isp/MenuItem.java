@@ -13,7 +13,8 @@ import java.util.List;
 public class MenuItem implements IMenuItem {
     private final static String LN = System.getProperty("line.separator");
     private String name;
-    private List<MenuItem> childs;
+    private Event event = new SimpleEvent();
+    private List<MenuItem> childs = new ArrayList<>();
 
     /**
      * Constructor
@@ -21,7 +22,6 @@ public class MenuItem implements IMenuItem {
      */
     public MenuItem(String name) {
         this.name = name;
-        this.childs = new ArrayList<>();
     }
 
     /**
@@ -45,7 +45,16 @@ public class MenuItem implements IMenuItem {
      */
     @Override
     public void action() {
-        System.out.printf("Action from \"%s\" menu item%s", name, LN);
+        event.setMessage(String.format("Action from \"%s\" menu item%s", name, LN));
+    }
+
+    /**
+     * Returns event message
+     * @return event message
+     */
+    @Override
+    public String getMessage() {
+        return event.message();
     }
 
     /**

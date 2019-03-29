@@ -8,7 +8,7 @@ public class StringGeneratorTest {
 
     @Test
     public void whenGenerateNotMoreValueThenStringLengthNotMoreValue() {
-        StringGenerator sg = new StringGenerator(100);
-        assertTrue(sg.generate().length() <= 100);
+        StringGenerator sg = new StringGenerator();
+        assertTrue(sg.generate(100).length() <= 100);
     }
 }
