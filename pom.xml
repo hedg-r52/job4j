@@ -26,6 +26,7 @@
         <module>chapter_007</module>
         <module>SqlRuParser</module>
         <module>pack</module>
+        <module>exercises</module>
     </modules>
 
     <profiles>
