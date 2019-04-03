@@ -20,7 +20,7 @@ public class TextFileGeneratorTest {
         int lineLength = 40;
         int countLines = 10;
         TextFileGenerator tfg = new TextFileGenerator();
-        tfg.generate(FILE, lineLength, countLines);
+        tfg.generate(FILE, countLines, lineLength);
         assertThat((int) Files.lines(Paths.get(FILE)).count(), is(countLines));
     }
 
