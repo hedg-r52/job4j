@@ -1,5 +1,7 @@
 package tdd;
 
+import java.util.List;
+
 /**
  * @author Andrei Soloviev (hedg.r52@gmail.com)
  * @version $Id$
@@ -12,5 +14,5 @@ public interface Template {
      * @param data
      * @return
      */
-    String generate(String template, Object[] data) throws Exception;
+    String generate(String template, List<Pair> data) throws Exception;
 }
