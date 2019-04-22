@@ -8,10 +8,10 @@
     <url>http://job4j.ru/</url>
 
     <properties>
-       <maven.compiler.source>1.8</maven.compiler.source>
-       <maven.compiler.target>1.8</maven.compiler.target>
-       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-     </properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <modules>
         <module>utils</module>
@@ -27,6 +27,7 @@
         <module>SqlRuParser</module>
         <module>pack</module>
         <module>exercises</module>
+        <module>chapter_008</module>
     </modules>
 
     <profiles>
@@ -78,6 +79,12 @@
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.25</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
