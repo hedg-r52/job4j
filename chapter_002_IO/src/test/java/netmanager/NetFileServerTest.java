@@ -72,15 +72,12 @@ public class NetFileServerTest {
                 )
         );
         server.start();
-        assertThat(this.out.toString(),
-                is(
-                        String.format(
-                                "Current directory: %s%s [DIR] %s%s[FILE] %s%s",
-                                tempDir.getAbsolutePath(), LN,
-                                dirPath, LN,
-                                filePath, LN)
-                )
-        );
+        String file = String.format("[FILE] %s", filePath);
+        String dir = String.format("[DIR] %s", dirPath);
+        String current = String.format("Current directory: %s", tempDir.getAbsolutePath());
+        assertTrue(this.out.toString().contains(file));
+        assertTrue(this.out.toString().contains(dir));
+        assertTrue(this.out.toString().contains(current));
     }
 
     @Test
