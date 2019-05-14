@@ -28,6 +28,7 @@
         <module>pack</module>
         <module>exercises</module>
         <module>chapter_008</module>
+        <module>chapter_009</module>
     </modules>
 
     <profiles>
