@@ -12,7 +12,7 @@ import java.util.Map;
  * @since 0.1
  */
 public abstract class BaseCache implements Cache<String, String> {
-    private Map<String, SoftReference<String>> storage = new HashMap<>();
+    private final Map<String, SoftReference<String>> storage = new HashMap<>();
 
     @Override
     public String get(String key) {
