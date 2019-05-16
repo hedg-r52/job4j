@@ -2,6 +2,7 @@ package crud.persistent;
 
 import crud.model.User;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Store interface
@@ -15,5 +16,5 @@ public interface Store {
     boolean update(int index, User user);
     boolean delete(int id);
     List<User> findAll();
-    User findById(int id);
+    Optional<User> findById(int id);
 }

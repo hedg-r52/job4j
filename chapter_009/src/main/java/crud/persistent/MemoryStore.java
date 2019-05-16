@@ -4,6 +4,7 @@ import crud.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +42,7 @@ public class MemoryStore implements Store {
     @Override
     public boolean update(int index, User user) {
         boolean result = false;
-        if (users.containsKey(id) && !users.get(id).equals(user)) {
+        if (users.containsKey(index) && !users.get(index).equals(user)) {
             users.replace(index, user);
             result = true;
         }
@@ -59,7 +60,7 @@ public class MemoryStore implements Store {
     }
 
     @Override
-    public User findById(int id) {
-        return users.get(id);
+    public Optional<User> findById(int id) {
+        return Optional.of(users.get(id));
     }
 }

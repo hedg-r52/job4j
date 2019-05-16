@@ -6,9 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * User servlet
@@ -18,19 +15,12 @@ import java.util.function.Function;
  * @since 0.1
  */
 public class UserServlet extends HttpServlet {
-    private Map<String, Function<HttpServletRequest, String>> dispatch = new HashMap<>();
     private final Validate logic = ValidateService.getInstance();
-
-    public UserServlet() {
-        this.dispatch.put("add", this::add);
-        this.dispatch.put("update", this::update);
-        this.dispatch.put("delete", this::delete);
-    }
 
     /**
      * Method returns list all users
-     * @param req
-     * @param resp
+     * @param req request
+     * @param resp response
      * @throws ServletException
      * @throws IOException
      */
@@ -38,55 +28,56 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
-        writer.append(logic.findAll());
+        StringBuilder sb = new StringBuilder("<table border=1>");
+        sb.append("<tr><th>Id</th><th>Name</th><th>Login</th><th>Email</th><th></th><th></th></tr>");
+        for (User user : logic.findAll()) {
+            sb.append("<tr>")
+                    .append("<td>").append(user.id()).append("</td>")
+                    .append("<td>").append(user.name()).append("</td>")
+                    .append("<td>").append(user.login()).append("</td>")
+                    .append("<td>").append(user.email()).append("</td>")
+                    .append("<td>")
+                    .append("<form action='").append(req.getContextPath()).append("/list' method='post'>")
+                    .append("<button name='id' type='hidden' value=").append(user.id()).append(">Delete</button>")
+                    .append("</form>")
+                    .append("</td>")
+                    .append("<td>")
+                    .append("<form action='").append(req.getContextPath()).append("/edit' method='get'>")
+                    .append("<button name='id' type='hidden' value=").append(user.id()).append(">Update</button>")
+                    .append("</form>")
+                    .append("</td>")
+                    .append("</tr>");
+        }
+        sb.append("</table>");
+        writer.append("<!DOCTYPE html>")
+                        .append("<html lang=\"en\">")
+                        .append("<head>")
+                        .append("    <meta charset=\"UTF-8\">")
+                        .append("    <title>List of users</title>")
+                        .append("</head>")
+                        .append("<br/>")
+                        .append("<form action='").append(req.getContextPath()).append("/create' method='get'>")
+                        .append("<input type='submit' value='Create new user'>")
+                        .append("</form>")
+                        .append("<br>List of users:</br>")
+                        .append(sb.toString())
+                        .append("</body>")
+                        .append("</html>");
         writer.flush();
     }
 
     /**
      * Method for 3 actions: create, modify or delete user
-     * @param req
-     * @param resp
-     * @throws ServletException
-     * @throws IOException
+     * @param req request
+     * @param resp response
+     * @throws ServletException servlet exception
+     * @throws IOException io exception
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String action = req.getParameter("action");
-        Function<HttpServletRequest, String> function = dispatch.getOrDefault(action, request -> {
-            throw new UnsupportedOperationException(String.format("Action %s is not found", action));
-        });
-        String result = function.apply(req);
-        resp.getOutputStream().println(result);
+        resp.setContentType("text/html");
+        int id = Integer.valueOf(req.getParameter("id"));
+        logic.delete(id);
         doGet(req, resp);
-    }
-
-    /**
-     * handle for adding user
-     * @param req request
-     * @return message
-     */
-    private String add(HttpServletRequest req) {
-        String name = getStringParameter(req, "name");
-        String login = getStringParameter(req, "login");
-        String email = getStringParameter(req, "email");
-        return logic.add(new User(name, login, email));
-    }
-
-    private String update(HttpServletRequest req) {
-        int id = Integer.parseInt(req.getParameter("id"));
-        String name = getStringParameter(req, "name");
-        String login = getStringParameter(req, "login");
-        String email = getStringParameter(req, "email");
-        return logic.update(new User(id, name, login, email));
-    }
-
-    private String delete(HttpServletRequest req) {
-        int id = Integer.parseInt(req.getParameter("id"));
-        return logic.delete(id);
-    }
-
-    private String getStringParameter(HttpServletRequest req, String name) {
-        String result = req.getParameter(name);
-        return result != null ? result : "";
     }
 }

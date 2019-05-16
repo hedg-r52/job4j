@@ -1,6 +1,8 @@
 package crud.logic;
 
 import crud.model.User;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Validate interface
@@ -10,9 +12,9 @@ import crud.model.User;
  * @since 0.1
  */
 public interface Validate {
-    String add(User user);
-    String update(User user);
-    String delete(int id);
-    String findAll();
-    String findById(int id);
+    boolean add(User user);
+    boolean update(User user);
+    boolean delete(int id);
+    List<User> findAll();
+    Optional<User> findById(int id);
 }

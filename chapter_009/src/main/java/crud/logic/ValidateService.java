@@ -4,6 +4,7 @@ import crud.model.User;
 import crud.persistent.MemoryStore;
 import crud.persistent.Store;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Validate service
@@ -24,37 +25,36 @@ public class ValidateService implements Validate {
     }
 
     @Override
-    public String add(User user) {
-        String result = "";
-        if (!user.name().isEmpty() && !user.login().isEmpty() && !user.email().isEmpty()) {
-            result = (store.add(user) ? "User added." : "User not added.");
-        } else {
-            result += (user.name().isEmpty() ? "Name is empty" + System.lineSeparator() : "");
-            result += (user.login().isEmpty() ? "Login is empty" + System.lineSeparator() : "");
-            result += (user.email().isEmpty() ? "Email is empty" + System.lineSeparator() : "");
+    public boolean add(User user) {
+        boolean result = false;
+        if (!isExist(user)) {
+            store.add(user);
+            result = true;
         }
         return result;
     }
 
     @Override
-    public String update(User user) {
-        return store.update(user.id(), user) ? "User updated." : "User is not updated.";
+    public boolean update(User user) {
+        return store.update(user.id(), user);
     }
 
     @Override
-    public String delete(int id) {
-        return store.delete(id) ? "User deleted." : "User is not deleted.";
+    public boolean delete(int id) {
+        return store.delete(id);
     }
 
     @Override
-    public String findAll() {
-        List<User> users = store.findAll();
-        return users.isEmpty() ? "No users at storage." : users.toString();
+    public List<User> findAll() {
+        return store.findAll();
     }
 
     @Override
-    public String findById(int id) {
-        User user = store.findById(id);
-        return user == null ? "No user at storage." : user.toString();
+    public Optional<User> findById(int id) {
+        return store.findById(id);
+    }
+
+    private boolean isExist(User user) {
+        return !store.findAll().isEmpty() && store.findAll().contains(user);
     }
 }
