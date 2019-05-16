@@ -1,4 +1,4 @@
-package demo;
+package cache;
 
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -7,22 +7,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-public class FileCache extends Cache<String, String> {
+public class FileCache extends BaseCache {
     HashMap<String, SoftReference<String>> storage = new HashMap<>();
 
-    @Override
-    public int size() {
-        return storage.size();
-    }
 
     @Override
-    public String get(String key) {
-        return (storage.containsKey(key) && storage.get(key).get() != null)
-                ? storage.get(key).get()
-                : getFromFile(storage, key);
-    }
-
-    private String getFromFile(HashMap<String, SoftReference<String>> storage, String key) {
+    protected String load(String key) throws IOException {
         String result = "";
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(key));
