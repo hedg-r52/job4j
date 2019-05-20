@@ -9,7 +9,7 @@
     <form action='<%=request.getContextPath()%>/create/' method='get'>
         <input type='submit' value='Create new user'>
     </form>
-    <br>List of users:</br>
+    <br>List of users:
     <table style="border: 1px solid black;" border="1" cellpadding="1" cellspacing="1">
         <tr>
             <th>Id</th>

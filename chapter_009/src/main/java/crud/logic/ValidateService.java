@@ -1,6 +1,7 @@
 package crud.logic;
 
 import crud.model.User;
+import crud.persistent.DBStore;
 import crud.persistent.MemoryStore;
 import crud.persistent.Store;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Optional;
  */
 public class ValidateService implements Validate {
     private static final ValidateService INSTANCE = new ValidateService();
-    private final Store store = MemoryStore.getInstance();
+    private final Store store = DBStore.getInstance();
 
     public ValidateService() {
     }

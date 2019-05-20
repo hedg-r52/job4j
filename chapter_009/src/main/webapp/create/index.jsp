@@ -12,7 +12,6 @@
     Email : <input type = 'text' name='email'/>
     <input type = 'submit'>
 </form>
-</br>
 <form action="<%=request.getContextPath()%>/list/" method="get">
     <input type='submit' value='User list'>
 </form>

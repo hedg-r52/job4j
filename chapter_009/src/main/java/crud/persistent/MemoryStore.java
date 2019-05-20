@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @version $Id$
  * @since 0.1
  */
-public class MemoryStore implements Store {
+public class MemoryStore implements Store<User> {
     private volatile AtomicInteger id = new AtomicInteger(0);
     private static final MemoryStore INSTANCE = new MemoryStore();
     private final ConcurrentHashMap<Integer, User> users = new ConcurrentHashMap<>();

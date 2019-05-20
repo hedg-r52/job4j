@@ -11,10 +11,10 @@ import java.util.Optional;
  * @version $Id$
  * @since 0.1
  */
-public interface Store {
-    boolean add(User user);
-    boolean update(int index, User user);
+public interface Store<T> {
+    boolean add(T t);
+    boolean update(int index, T t);
     boolean delete(int id);
-    List<User> findAll();
-    Optional<User> findById(int id);
+    List<T> findAll();
+    Optional<T> findById(int id);
 }
