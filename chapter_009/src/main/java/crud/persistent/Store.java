@@ -1,6 +1,5 @@
 package crud.persistent;
 
-import crud.model.User;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,4 +16,6 @@ public interface Store<T> {
     boolean delete(int id);
     List<T> findAll();
     Optional<T> findById(int id);
+    boolean isCredential(String login, String password);
+    Optional<T> findByLogin(String login);
 }
