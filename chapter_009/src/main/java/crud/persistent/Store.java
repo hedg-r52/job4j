@@ -17,4 +17,6 @@ public interface Store<T> {
     boolean delete(int id);
     List<T> findAll();
     Optional<T> findById(int id);
+    boolean isCredential(String login, String password);
+    Optional<User> findByLogin(String login);
 }

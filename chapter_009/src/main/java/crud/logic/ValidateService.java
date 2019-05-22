@@ -2,7 +2,6 @@ package crud.logic;
 
 import crud.model.User;
 import crud.persistent.DBStore;
-import crud.persistent.MemoryStore;
 import crud.persistent.Store;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +36,7 @@ public class ValidateService implements Validate {
 
     @Override
     public boolean update(User user) {
-        return store.update(user.id(), user);
+        return store.update(user.getId(), user);
     }
 
     @Override
@@ -53,6 +52,11 @@ public class ValidateService implements Validate {
     @Override
     public Optional<User> findById(int id) {
         return store.findById(id);
+    }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        return store.findByLogin(login);
     }
 
     private boolean isExist(User user) {

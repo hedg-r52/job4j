@@ -17,4 +17,5 @@ public interface Validate {
     boolean delete(int id);
     List<User> findAll();
     Optional<User> findById(int id);
+    Optional<User> findByLogin(String login);
 }

@@ -1,11 +1,11 @@
 package crud.presentation;
 
 import crud.logic.*;
-import crud.model.User;
+import crud.persistent.MemoryRoleStore;
+import crud.persistent.RoleStore;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * User servlet
@@ -16,19 +16,27 @@ import java.io.PrintWriter;
  */
 public class UserServlet extends HttpServlet {
     private final Validate logic = ValidateService.getInstance();
+    private final RoleStore roleStore = MemoryRoleStore.getInstance();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setAttribute("users", logic.findAll());
+        req.getRequestDispatcher("/WEB-INF/views/UserList.jsp").forward(req, resp);
+    }
 
     /**
      * Delete user
-     * @param req request
+     *
+     * @param req  request
      * @param resp response
      * @throws ServletException servlet exception
-     * @throws IOException io exception
+     * @throws IOException      io exception
      */
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html");
         int id = Integer.valueOf(req.getParameter("id"));
         logic.delete(id);
-        resp.sendRedirect(req.getContextPath() + "/list/");
+        resp.sendRedirect(req.getContextPath() + "/");
     }
 }

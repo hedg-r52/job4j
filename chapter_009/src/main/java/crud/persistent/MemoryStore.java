@@ -63,4 +63,28 @@ public class MemoryStore implements Store<User> {
     public Optional<User> findById(int id) {
         return Optional.of(users.get(id));
     }
+
+    @Override
+    public boolean isCredential(String login, String password) {
+        boolean result = false;
+        for (User user : this.users.values()) {
+            if (login.equals(user.getLogin()) && password.equals(user.getPassword())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        Optional<User> result = Optional.empty();
+        for (User user : this.users.values()) {
+            if (login.equals(user.getLogin())) {
+                result = Optional.of(user);
+                break;
+            }
+        }
+        return result;
+    }
 }
