@@ -20,7 +20,7 @@ public class ValidateService implements Validate {
     public ValidateService() {
     }
 
-    public static ValidateService getInstance() {
+    public static Validate getInstance() {
         return INSTANCE;
     }
 

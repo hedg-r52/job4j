@@ -19,11 +19,9 @@ public class AuthFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         if (!request.getRequestURI().contains("/signin")) {
             HttpSession session = request.getSession();
-            synchronized (session) {
-                if (session.getAttribute("login") == null) {
-                    ((HttpServletResponse) resp).sendRedirect(String.format("%s/signin", ((HttpServletRequest) req).getContextPath()));
-                    return;
-                }
+            if (session.getAttribute("login") == null) {
+                ((HttpServletResponse) resp).sendRedirect(String.format("%s/signin", ((HttpServletRequest) req).getContextPath()));
+                return;
             }
         }
         chain.doFilter(req, resp);

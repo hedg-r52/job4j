@@ -5,6 +5,7 @@ import crud.persistent.DBStore;
 import crud.persistent.MemoryRoleStore;
 import crud.persistent.RoleStore;
 import crud.persistent.Store;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,11 +36,9 @@ public class SigninController extends HttpServlet {
         String password = req.getParameter("password");
         if (store.isCredential(login, password)) {
             HttpSession session = req.getSession();
-            synchronized (session) {
-                session.setAttribute("login", login);
-                String role = ((User) store.findByLogin(login).get()).getRole();
-                session.setAttribute("admin", roleStore.getRole(role).isAdministrator());
-            }
+            session.setAttribute("login", login);
+            String role = ((User) store.findByLogin(login).get()).getRole();
+            session.setAttribute("admin", roleStore.getRole(role).isAdministrator());
             resp.sendRedirect(String.format("%s/", req.getContextPath()));
         } else {
             req.setAttribute("error", "Credential invalid.");
