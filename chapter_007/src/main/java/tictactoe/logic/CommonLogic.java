@@ -103,7 +103,7 @@ public class CommonLogic implements Logic {
      */
     @Override
     public boolean noMove() {
-        return false;
+        return board.isFilled();
     }
 
     /**

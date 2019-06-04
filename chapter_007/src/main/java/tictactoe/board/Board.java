@@ -57,6 +57,12 @@ public interface Board {
     boolean isEmpty(int x, int y);
 
     /**
+     * Check cells of board for move
+     * @return true - if no move, false - can make move
+     */
+    boolean isFilled();
+
+    /**
      * String representation of board
      * @return string representation
      */

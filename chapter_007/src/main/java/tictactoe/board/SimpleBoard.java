@@ -109,6 +109,24 @@ public class SimpleBoard implements Board {
     }
 
     /**
+     * Check cells of board for move
+     * @return true - if no move, false - can make move
+     */
+    @Override
+    public boolean isFilled() {
+        boolean result = true;
+        for (int j = 0; j < DEFAULT_SIZE; j++) {
+            for (int i = 0; i < DEFAULT_SIZE; i++) {
+                if (isEmpty(i, j)) {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * String representation of board
      * @return string representation
      */
