@@ -1,7 +1,5 @@
 package ru.job4j.tree;
 
-import java.util.Optional;
-
 /**
  * Простое дерево
  *

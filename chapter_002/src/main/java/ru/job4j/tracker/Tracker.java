@@ -1,7 +1,6 @@
 package ru.job4j.tracker;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * @author Andrei Soloviev (hedg.r52@gmail.com)

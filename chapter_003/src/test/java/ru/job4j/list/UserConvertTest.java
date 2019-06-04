@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 /**
- * TODO description
+ * UserConvertTest
  *
  * @author Andrei Soloviev (hedg.r52@gmail.com)
  * @version $Id$

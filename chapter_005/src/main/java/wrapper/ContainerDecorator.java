@@ -1,6 +1,5 @@
 package wrapper;
 
-import java.io.Serializable;
 import java.util.Iterator;
 
 public class ContainerDecorator<E> extends Container<E> {

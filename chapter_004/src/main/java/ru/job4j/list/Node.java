@@ -2,8 +2,6 @@ package ru.job4j.list;
 
 import ru.job4j.generic.SimpleArray;
 
-import java.util.Iterator;
-
 /**
  * Узел списка
  *

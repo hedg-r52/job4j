@@ -6,8 +6,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * Тестирование класса User
  *

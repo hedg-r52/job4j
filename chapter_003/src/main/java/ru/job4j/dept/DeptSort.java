@@ -43,7 +43,6 @@ public class DeptSort {
                 result.add(new Org(path.toString()));
             }
         }
-        List<Org> list = new ArrayList<>(result);
-        return list;
+        return new ArrayList<>(result);
     }
 }

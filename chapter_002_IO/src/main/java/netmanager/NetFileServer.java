@@ -1,7 +1,6 @@
 package netmanager;
 
 import ru.job4j.utils.config.Config;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;

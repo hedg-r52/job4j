@@ -1,10 +1,7 @@
 package wrapper;
 
 import net.jcip.annotations.GuardedBy;
-import org.apache.commons.lang.SerializationUtils;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Iterator;
 
 public class ThreadSafeContainer<E> extends ContainerDecorator<E> {

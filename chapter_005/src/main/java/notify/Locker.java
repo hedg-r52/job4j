@@ -1,7 +1,5 @@
 package notify;
 
-import java.util.concurrent.locks.Lock;
-
 /**
  * Cобственный механизм блокировок Lock
  *

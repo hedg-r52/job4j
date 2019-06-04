@@ -42,9 +42,9 @@ public class SimpleHashMapTest {
         shm.insert(2, "two");
         Iterator<Integer> it = shm.iterator();
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next(), is("one"));
+        assertThat(shm.get(it.next()), is("one"));
         assertThat(it.hasNext(), is(true));
-        assertThat(it.next(), is("two"));
+        assertThat(shm.get(it.next()), is("two"));
         assertThat(it.hasNext(), is(false));
     }
 
@@ -58,12 +58,12 @@ public class SimpleHashMapTest {
         shm.insert(56, "fifty six");
         shm.insert(67, "sixty seven");
         Iterator<Integer> it = shm.iterator();
-        assertThat(it.next(), is("one"));
-        assertThat(it.next(), is("twenty three"));
-        assertThat(it.next(), is("forty five"));
-        assertThat(it.next(), is("sixty seven"));
-        assertThat(it.next(), is("twelve"));
-        assertThat(it.next(), is("thirty four"));
-        assertThat(it.next(), is("fifty six"));
+        assertThat(shm.get(it.next()), is("one"));
+        assertThat(shm.get(it.next()), is("twenty three"));
+        assertThat(shm.get(it.next()), is("forty five"));
+        assertThat(shm.get(it.next()), is("sixty seven"));
+        assertThat(shm.get(it.next()), is("twelve"));
+        assertThat(shm.get(it.next()), is("thirty four"));
+        assertThat(shm.get(it.next()), is("fifty six"));
     }
 }

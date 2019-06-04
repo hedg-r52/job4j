@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * TODO description
+ * Matrix iterator
  *
  * @author Andrei Soloviev (hedg.r52@gmail.com)
  * @version $Id$

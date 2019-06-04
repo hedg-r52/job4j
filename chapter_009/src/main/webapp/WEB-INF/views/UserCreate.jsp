@@ -6,17 +6,30 @@
 </head>
 <body>
 <form action="<c:out value="${pageContext.servletContext.contextPath}"/>/create" method="post">
-    Name : <input type = 'text' name='name'/>
+    <label>
+        Name :
+        <input type='text' name='name'/>
+    </label>
     Login : <input type = 'text' name='login'/>
-    Email : <input type = 'text' name='email'/>
-    Password : <input type="password" name='password'/>
-    Role : <select name="role">
-    <c:forEach items="${roles}" var="role">
-        <option value="<c:out value='${role.name}'/>" <c:if test="${role.name == 'user'}"><c:out value="selected"/></c:if> >
-            <c:out value="${role.name}"/>
-        </option>
-    </c:forEach>
-    </select>
+    <label>
+        Email :
+        <input type='text' name='email'/>
+    </label>
+    <label>
+        Password :
+        <input type="password" name='password'/>
+    </label>
+    <label>
+        Role :
+        <select name="role">
+            <c:forEach items="${roles}" var="role">
+                <option value="<c:out value='${role.name}'/>"
+                <c:if test="${role.name == 'user'}"><c:out value="selected"/></c:if> >
+                <c:out value="${role.name}"/>
+                </option>
+            </c:forEach>
+        </select>
+    </label>
     <input type = 'submit'>
 </form>
 <form action="<c:out value="${pageContext.servletContext.contextPath}"/>/" method="get">

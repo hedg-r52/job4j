@@ -4,7 +4,6 @@ import ru.job4j.chess.exceptions.*;
 import ru.job4j.chess.figures.Cell;
 import ru.job4j.chess.figures.Figure;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 

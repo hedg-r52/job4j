@@ -16,8 +16,12 @@
             </th>
         </tr>
         <form action="${pageContext.servletContext.contextPath}/signin" method="post">
-            <tr><td>Login:</td><td><input type="text" name="login"></td></tr>
-            <tr><td>Password:</td><td><input type="password" name="password"></td></tr>
+            <tr><td>Login:</td><td><label>
+                <input type="text" name="login">
+            </label></td></tr>
+            <tr><td>Password:</td><td><label>
+                <input type="password" name="password">
+            </label></td></tr>
             <tr><td colspan=2><input type="submit"></td></tr>
         </form>
     </table>

@@ -1,4 +1,4 @@
-package fs;
+package ru.job4j.utils.fs;
 
 import com.google.common.base.Joiner;
 

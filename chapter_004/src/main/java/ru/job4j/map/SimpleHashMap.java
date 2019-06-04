@@ -98,7 +98,7 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
                 if (index >= table.length) {
                     throw new NoSuchElementException();
                 }
-                return (K) table[index++].value;
+                return (K) table[index++].key;
             }
         };
     }

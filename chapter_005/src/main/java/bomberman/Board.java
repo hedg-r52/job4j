@@ -37,8 +37,7 @@ public class Board {
     }
 
     public boolean init(Cell dest) throws InterruptedException {
-        boolean result = board[dest.getX()][dest.getY()].tryLock(MILLIS_FOR_TRYLOCK, TimeUnit.MILLISECONDS);
-        return result;
+        return board[dest.getX()][dest.getY()].tryLock(MILLIS_FOR_TRYLOCK, TimeUnit.MILLISECONDS);
     }
 
     public int getWidth() {

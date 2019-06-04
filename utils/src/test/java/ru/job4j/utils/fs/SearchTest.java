@@ -1,4 +1,4 @@
-package fs;
+package ru.job4j.utils.fs;
 
 import org.junit.After;
 import org.junit.Before;
@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

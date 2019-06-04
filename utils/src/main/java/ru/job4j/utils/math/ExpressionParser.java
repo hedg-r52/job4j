@@ -72,9 +72,6 @@ public class ExpressionParser {
                         }
                     }
                     stack.pop();
-//                    if (!stack.isEmpty()) {
-//                        postfix.add(stack.pop());
-//                    }
                 } else {
                     while (!stack.isEmpty() && (priority(current) <= priority(stack.peek()))) {
                         postfix.add(stack.pop());

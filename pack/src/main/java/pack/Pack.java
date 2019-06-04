@@ -1,7 +1,7 @@
 package pack;
 
-import fs.Search;
 import org.apache.commons.cli.*;
+import ru.job4j.utils.fs.Search;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
