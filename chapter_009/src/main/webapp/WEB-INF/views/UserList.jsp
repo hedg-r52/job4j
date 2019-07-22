@@ -33,7 +33,7 @@
                 <td><c:out value="${user.role}"/></td>
                 <td>
 
-                    <form action='<c:out value="${pageContext.servletContext.contextPath}"/>/' method='post'>
+                    <form action='<c:out value="${pageContext.servletContext.contextPath}"/>/users' method='post'>
                         <button
                                 name='id'
                                 type='hidden'

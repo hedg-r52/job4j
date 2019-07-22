@@ -5,7 +5,7 @@
     <title>Update of user</title>
 </head>
 <body>
-<form action="<c:out value='${pageContext.servletContext.contextPath}'/>/" method="get">
+<form action="<c:out value='${pageContext.servletContext.contextPath}'/>/users" method="get">
     <input type="submit" value="Return to list of user">
 </form>
 <c:if test="${error != ''}">

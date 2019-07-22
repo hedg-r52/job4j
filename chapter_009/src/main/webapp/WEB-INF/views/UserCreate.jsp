@@ -32,7 +32,7 @@
     </label>
     <input type = 'submit'>
 </form>
-<form action="<c:out value="${pageContext.servletContext.contextPath}"/>/" method="get">
+<form action="<c:out value="${pageContext.servletContext.contextPath}"/>/users" method="get">
     <input type='submit' value='User list'>
 </form>
 <c:if test="${error != ''}">

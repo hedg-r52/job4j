@@ -34,6 +34,47 @@
                 $('#table tr:last').after(row);
             }
         }
+        function sendData() {
+            if (validate()) {
+                var data = {
+                    "name": $('#name').val(),
+                    "surname": $('#surname').val(),
+                    "gender": $("[name='gender']:checked").val(),
+                    "desc": $('#desc').val()
+                };
+                $.ajax({
+                    method: "post",
+                    url: "json",
+                    data: JSON.stringify(data),
+                    contentType: "application/json",
+                    complete: function () {
+                        readData();
+                    }
+                });
+            }
+        }
+        function cleatTable() {
+            $("#table").find("tr:gt(0)").remove();
+        }
+        function readData() {
+            $.ajax({
+                method: "get",
+                url: "json",
+                contentType: "text/json",
+                complete: function (data) {
+                    cleatTable();
+                    var users = JSON.parse(data.responseText);
+                    for (var i = 0; i !== users.length; ++i) {
+                        var name = users[i].name;
+                        var surname = users[i].surname;
+                        var gender = users[i].gender;
+                        var desc = users[i].desc;
+                        $('#table tr:last')
+                            .after('<tr><td>' + name + '</td><td>' + surname + '</td><td>' + gender + '</td><td>' + desc + '</td></tr>');
+                    }
+                }
+            })
+        }
     </script>
 </head>
 <body>
@@ -68,6 +109,8 @@
                     </div>
                 </div>
                 <button type="button" class="btn btn-default" onclick="return addRow();">add row</button>
+                <button type="button" class="btn btn-default" value="Ajax" onclick="sendData();">Ajax</button>
+
             </form>
             <table class="table table-striped" id="table">
                 <thead>
