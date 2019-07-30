@@ -37,9 +37,11 @@ public class SigninController extends HttpServlet {
         if (store.isCredential(login, password)) {
             HttpSession session = req.getSession();
             session.setAttribute("login", login);
-            String role = ((User) store.findByLogin(login).get()).getRole();
+            User user = (User) store.findByLogin(login).get();
+            String role = user.getRole();
+            session.setAttribute("id", user.getId());
             session.setAttribute("admin", roleStore.getRole(role).isAdministrator());
-            resp.sendRedirect(String.format("%s/", req.getContextPath()));
+            resp.sendRedirect(String.format("%s/users", req.getContextPath()));
         } else {
             req.setAttribute("error", "Credential invalid.");
             doGet(req, resp);

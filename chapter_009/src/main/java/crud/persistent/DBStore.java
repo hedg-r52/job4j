@@ -12,6 +12,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import ru.job4j.utils.jdbc.DBHelper;
 
+import javax.swing.text.html.Option;
+
 /**
  * DBStore
  *
@@ -36,7 +38,6 @@ public class DBStore implements Store<User> {
         SOURCE.setMinIdle(5);
         SOURCE.setMaxIdle(10);
         SOURCE.setMaxOpenPreparedStatements(100);
-        this.createTableUsersIfNotExist();
     }
 
     /**
@@ -57,13 +58,25 @@ public class DBStore implements Store<User> {
         boolean result = false;
         try (Connection connection = SOURCE.getConnection();
              DBHelper db = new DBHelper(connection, LOGGER)) {
-            result = db.query(
-                    "insert into users (name, login, email, password, role) values (?, ?, ?, ?, ?);",
-                    Arrays.asList(user.getName(), user.getLogin(), user.getEmail(), user.getPassword(), user.getRole()),
-                    ps -> {
-                        ps.executeUpdate();
-                        return true;
-                    }).orElse(false);
+            Optional<Integer> countryId = countryIdByName(db, user.getCountry());
+            Optional<Integer> cityId = cityIdByName(db, user.getCity());
+            if (cityId.isPresent() && countryId.isPresent()) {
+                result = db.query(
+                        "insert into users (name, login, email, password, role, created, country, city) values (?, ?, ?, ?, ?, now(), ?, ?);",
+                        Arrays.asList(
+                                user.getName(),
+                                user.getLogin(),
+                                user.getEmail(),
+                                user.getPassword(),
+                                user.getRole(),
+                                countryId.get(),
+                                cityId.get()
+                        ),
+                        ps -> {
+                            ps.executeUpdate();
+                            return true;
+                        }).orElse(false);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,14 +94,27 @@ public class DBStore implements Store<User> {
         boolean result = false;
         try (Connection connection = SOURCE.getConnection();
              DBHelper db = new DBHelper(connection, LOGGER)) {
-            result = db.query(
-                    "update users set name = ?, login = ?, email = ?, role = ? where id = ?;",
-                    Arrays.asList(user.getName(), user.getLogin(), user.getEmail(), user.getRole(), index),
-                    ps -> {
-                        ps.executeUpdate();
-                        return true;
-                    }
-            ).orElse(false);
+            Optional<Integer> countryId = countryIdByName(db, user.getCountry());
+            Optional<Integer> cityId = cityIdByName(db, user.getCity());
+            if (countryId.isPresent() && cityId.isPresent()) {
+                result = db.query(
+                        "update users set name = ?, login = ?, email = ?, role = ?, password = ?, country = ?, city = ? where id = ?;",
+                        Arrays.asList(
+                                user.getName(),
+                                user.getLogin(),
+                                user.getEmail(),
+                                user.getRole(),
+                                user.getPassword(),
+                                countryId.get(),
+                                cityId.get(),
+                                index
+                        ),
+                        ps -> {
+                            ps.executeUpdate();
+                            return true;
+                        }
+                ).orElse(false);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,21 +154,26 @@ public class DBStore implements Store<User> {
         final List<User> result = new ArrayList<>();
         try (Connection connection = SOURCE.getConnection();
              DBHelper db = new DBHelper(connection, LOGGER)) {
-            db.query("select * from users order by id;",
+            db.query("select u.id, u.name, u.login, u.email, u.password, u.role, co.title country, ci.title city"
+                            + " from users u"
+                            + " left join countries co on u.country = co.id"
+                            + " left join cities ci on u.city = ci.id"
+                            + " order by id;",
                 Arrays.asList(),
                 ps -> {
                     try (final ResultSet rs = ps.executeQuery()) {
                         while (rs.next()) {
-                            result.add(
-                                    new User(
-                                            rs.getInt("id"),
-                                            rs.getString("name"),
-                                            rs.getString("login"),
-                                            rs.getString("email"),
-                                            rs.getString("password"),
-                                            rs.getString("role")
-                                            )
+                            User user = new User(
+                                    rs.getInt("id"),
+                                    rs.getString("name"),
+                                    rs.getString("login"),
+                                    rs.getString("email"),
+                                    rs.getString("password"),
+                                    rs.getString("role")
                             );
+                            user.setCountry(rs.getString("country"));
+                            user.setCity(rs.getString("city"));
+                            result.add(user);
                         }
                     }
                 });
@@ -163,7 +194,11 @@ public class DBStore implements Store<User> {
         try (Connection connection = SOURCE.getConnection();
              DBHelper db = new DBHelper(connection, LOGGER)) {
             user = db.query(
-                    "select * from users where id = ?",
+                        "select u.id, u.name, u.login, u.email, u.password, u.role, co.title country, ci.title city"
+                            + " from users u"
+                            + " left join countries co on u.country = co.id"
+                            + " left join cities ci on u.city = ci.id"
+                            + " where u.id = ?;",
                     Arrays.asList(id),
                     ps -> {
                         try (final ResultSet rs = ps.executeQuery()) {
@@ -177,6 +212,8 @@ public class DBStore implements Store<User> {
                                         rs.getString("password"),
                                         rs.getString("role")
                                 );
+                                result.setCountry(rs.getString("country"));
+                                result.setCity(rs.getString("city"));
                             }
                             return result;
                         }
@@ -186,39 +223,6 @@ public class DBStore implements Store<User> {
             e.printStackTrace();
         }
         return user;
-    }
-
-    /**
-     * Method create if tables is absent
-     */
-    private void createTableUsersIfNotExist() {
-        try (Connection connection = SOURCE.getConnection();
-                DBHelper db = new DBHelper(connection, LOGGER)) {
-            db.query("create table if not exists users("
-                        + "id serial primary key,"
-                        + "name varchar(50),"
-                        + "login varchar(20),"
-                        + "email varchar(50),"
-                        + "password varchar(50),"
-                        + "role varchar(20)"
-                        + ");",
-                    Arrays.asList(),
-                    ps -> {
-                        ps.execute();
-                    }
-            );
-            if (this.findAll().isEmpty()) {
-                db.query(
-                        "INSERT INTO users(name, login, email, password, role) values (?, ?, ?, ?, ?);",
-                        Arrays.asList("root", "root", "root@root", "root", roles.getAdministrationRole().getName()),
-                        ps -> {
-                            ps.executeUpdate();
-                        }
-                );
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -247,7 +251,11 @@ public class DBStore implements Store<User> {
         try (Connection connection = SOURCE.getConnection();
              DBHelper db = new DBHelper(connection, LOGGER)) {
             user = db.query(
-                    "select * from users where login = ?",
+                        "select u.id, u.name, u.login, u.email, u.password, u.role, co.title country, ci.title city"
+                            + " from users u"
+                            + " left join countries co on u.country = co.id"
+                            + " left join cities ci on u.city = ci.id"
+                            + " where u.login = ?;",
                     Arrays.asList(login),
                     ps -> {
                         try (final ResultSet rs = ps.executeQuery()) {
@@ -261,6 +269,8 @@ public class DBStore implements Store<User> {
                                         rs.getString("password"),
                                         rs.getString("role")
                                 );
+                                result.setCountry(rs.getString("country"));
+                                result.setCity(rs.getString("city"));
                             }
                             return result;
                         }
@@ -270,5 +280,47 @@ public class DBStore implements Store<User> {
             e.printStackTrace();
         }
         return user;
+    }
+
+    /**
+     * Get country id by name
+     * @param db DBHelper for sql connection
+     * @param countryTitle title
+     * @return return Optional<Integer> value: value if found, else - Optional.empty()
+     */
+    private Optional<Integer> countryIdByName(DBHelper db, String countryTitle) {
+        return db.query(
+                "select id from countries where title = ?;",
+                Arrays.asList(countryTitle),
+                ps -> {
+                    Optional<Integer> id = Optional.empty();
+                    try (final ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            id = Optional.of(rs.getInt("id"));
+                        }
+                    }
+                    return id;
+                }).orElse(Optional.empty());
+    }
+
+    /**
+     * Get city id by name
+     * @param db DBHelper for sql connection
+     * @param cityTitle title
+     * @return return Optional<Integer> value: value if found, else - Optional.empty()
+     */
+    private Optional<Integer> cityIdByName(DBHelper db, String cityTitle) {
+        return db.query(
+                "select id from cities where title = ?;",
+                Arrays.asList(cityTitle),
+                ps -> {
+                    Optional<Integer> id = Optional.empty();
+                    try (final ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            id = Optional.of(rs.getInt("id"));
+                        }
+                    }
+                    return id;
+                }).orElse(Optional.empty());
     }
 }

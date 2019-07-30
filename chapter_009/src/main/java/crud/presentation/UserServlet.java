@@ -37,6 +37,6 @@ public class UserServlet extends HttpServlet {
         resp.setContentType("text/html");
         int id = Integer.valueOf(req.getParameter("id"));
         logic.delete(id);
-        resp.sendRedirect(req.getContextPath() + "/");
+        resp.sendRedirect(req.getContextPath() + "/users");
     }
 }

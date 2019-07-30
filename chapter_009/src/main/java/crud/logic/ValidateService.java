@@ -26,12 +26,7 @@ public class ValidateService implements Validate {
 
     @Override
     public boolean add(User user) {
-        boolean result = false;
-        if (!isExist(user)) {
-            store.add(user);
-            result = true;
-        }
-        return result;
+        return (!isExist(user) ? store.add(user) : false);
     }
 
     @Override

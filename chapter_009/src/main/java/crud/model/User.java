@@ -19,6 +19,8 @@ public class User {
     private LocalDateTime createDate;
     private String password;
     private String role;
+    private String country;
+    private String city;
 
     public User(String name, String login, String email, String password, String role) {
         this.name = name;
@@ -72,8 +74,16 @@ public class User {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getRole() {
         return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setEmail(String email) {
@@ -92,6 +102,22 @@ public class User {
         return name.equals(user.name)
                 && login.equals(user.login)
                 && email.equals(user.email);
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     @Override

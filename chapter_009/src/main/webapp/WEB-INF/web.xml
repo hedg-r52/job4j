@@ -4,7 +4,6 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
          http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
-    <!--
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>crud.presentation.AuthFilter</filter-class>
@@ -13,7 +12,14 @@
         <filter-name>AuthFilter</filter-name>
         <url-pattern>*</url-pattern>
     </filter-mapping>
-    -->
+    <filter>
+        <filter-name>EditFilter</filter-name>
+        <filter-class>crud.presentation.EditFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EditFilter</filter-name>
+        <url-pattern>/edit</url-pattern>
+    </filter-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
@@ -77,5 +83,22 @@
     <servlet-mapping>
         <servlet-name>EchoServlet</servlet-name>
         <url-pattern>/echo</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>CountriesController</servlet-name>
+        <servlet-class>crud.presentation.CountriesController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CountriesController</servlet-name>
+        <url-pattern>/countries</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CitiesController</servlet-name>
+        <servlet-class>crud.presentation.CitiesController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CitiesController</servlet-name>
+        <url-pattern>/cities</url-pattern>
     </servlet-mapping>
 </web-app>

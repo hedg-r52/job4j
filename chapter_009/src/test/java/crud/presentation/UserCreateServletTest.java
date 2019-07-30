@@ -40,6 +40,8 @@ public class UserCreateServletTest {
         when(req.getParameter("password")).thenReturn("password");
         when(req.getParameter("email")).thenReturn("no@mail.ru");
         when(req.getParameter("role")).thenReturn("role");
+        when(req.getParameter("country")).thenReturn("country");
+        when(req.getParameter("city")).thenReturn("city");
         new UserCreateServlet().doPost(req, resp);
         User user = validate.findAll().iterator().next();
         assertThat(user.getName(), is("user name"));
@@ -47,5 +49,7 @@ public class UserCreateServletTest {
         assertThat(user.getPassword(), is("password"));
         assertThat(user.getEmail(), is("no@mail.ru"));
         assertThat(user.getRole(), is("role"));
+        assertThat(user.getCountry(), is("country"));
+        assertThat(user.getCity(), is("city"));
     }
 }

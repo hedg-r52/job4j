@@ -38,8 +38,13 @@ public class UserCreateServlet extends HttpServlet {
         Optional<String> pass = Optional.ofNullable(req.getParameter("password"));
         Optional<String> email = Optional.ofNullable(req.getParameter("email"));
         Optional<String> role = Optional.ofNullable(req.getParameter("role"));
+        Optional<String> country = Optional.ofNullable(req.getParameter("country"));
+        Optional<String> city = Optional.ofNullable(req.getParameter("city"));
         if (name.isPresent() && login.isPresent() && email.isPresent() && pass.isPresent() && role.isPresent()) {
-            logic.add(new User(name.get(), login.get(), email.get(), pass.get(), role.get()));
+            User user = new User(name.get(), login.get(), email.get(), pass.get(), role.get());
+            user.setCountry(country.get());
+            user.setCity(city.get());
+            logic.add(user);
             resp.sendRedirect(req.getContextPath() + "/create");
         } else {
             req.setAttribute("error", "Not all fields are filled.");

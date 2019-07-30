@@ -36,13 +36,15 @@ public class UserUpdateServlet extends HttpServlet {
         Optional<String> name = Optional.ofNullable(req.getParameter("name"));
         Optional<String> login = Optional.ofNullable(req.getParameter("login"));
         Optional<String> email = Optional.ofNullable(req.getParameter("email"));
-        Optional<String> password = Optional.ofNullable(req.getParameter("password"));
         Optional<String> role = Optional.ofNullable(req.getParameter("role"));
-        if (name.isPresent() && login.isPresent() && email.isPresent() && password.isPresent() && role.isPresent()) {
+        Optional<String> password = Optional.ofNullable(req.getParameter("password"));
+        if (name.isPresent() && login.isPresent() && email.isPresent() && role.isPresent()) {
             User user = new User(name.get(), login.get(), email.get(), password.get(), role.get());
             user.setId(Integer.valueOf(req.getParameter("id")));
+            user.setCountry(req.getParameter("country"));
+            user.setCity(req.getParameter("city"));
             logic.update(user);
-            resp.sendRedirect(req.getContextPath() + "/");
+            resp.sendRedirect(req.getContextPath() + "/users");
         } else {
             req.setAttribute("error", "Not all fields are filled.");
             doGet(req, resp);
