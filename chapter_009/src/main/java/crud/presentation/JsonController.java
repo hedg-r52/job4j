@@ -11,13 +11,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class JsonController extends HttpServlet {
     private final Map<Integer, Person> persons = new ConcurrentHashMap();
-    private int id = 0;
+    private AtomicInteger id = new AtomicInteger();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = new PrintWriter(resp.getOutputStream());
@@ -27,7 +28,7 @@ public class JsonController extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = req.getReader()) {
             if (reader != null) {
@@ -36,6 +37,6 @@ public class JsonController extends HttpServlet {
         }
         ObjectMapper mapper = new ObjectMapper();
         Person person = mapper.readValue(sb.toString(), Person.class);
-        this.persons.put(this.id++, person);
+        this.persons.put(id.getAndIncrement(), person);
     }
 }

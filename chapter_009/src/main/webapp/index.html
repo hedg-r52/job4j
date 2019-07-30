@@ -53,16 +53,16 @@
                 });
             }
         }
-        function cleatTable() {
+        function clearTable() {
             $("#table").find("tr:gt(0)").remove();
         }
         function readData() {
             $.ajax({
                 method: "get",
-                url: "json",
+                url: "./json",
                 contentType: "text/json",
                 complete: function (data) {
-                    cleatTable();
+                    clearTable();
                     var users = JSON.parse(data.responseText);
                     for (var i = 0; i !== users.length; ++i) {
                         var name = users[i].name;
