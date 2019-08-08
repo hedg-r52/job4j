@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class JsonController extends HttpServlet {
     private final Map<Integer, Person> persons = new ConcurrentHashMap();
-    private AtomicInteger id = new AtomicInteger();
+    private final AtomicInteger id = new AtomicInteger();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
