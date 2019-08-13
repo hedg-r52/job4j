@@ -33,7 +33,7 @@
 
 Скриншот игры с компьютером приведён ниже:
 
-<img src='https://github.com/hedg-r52/job4j/tree/master/img/tictactoe.png'>
+<img src='https://github.com/hedg-r52/job4j/blob/1d6847cd2e77229e52807aca65af83e6d40c01c9/img/tictactoe.png'>
 
 
 
@@ -132,18 +132,18 @@
 
 Начальная страница авторизации:
 
-![](https://github.com/hedg-r52/job4j/tree/master/img/auth.png)
+![](https://github.com/hedg-r52/job4j/blob/1d6847cd2e77229e52807aca65af83e6d40c01c9/img/auth.png)
 
 Главная страница приложения для администратора:
 
-<a href='https://github.com/hedg-r52/job4j/tree/master/img/admin.png'>
-<img src='https://github.com/hedg-r52/job4j/tree/master/img/admin.png' width=500>
+<a href='https://github.com/hedg-r52/job4j/blob/1d6847cd2e77229e52807aca65af83e6d40c01c9/img/admin.png'>
+<img src='https://github.com/hedg-r52/job4j/blob/1d6847cd2e77229e52807aca65af83e6d40c01c9/img/admin.png' width=500>
 </a>
   
 Главная страница приложения для пользователя:
 
-<a href='https://github.com/hedg-r52/job4j/tree/master/img/user.png'>
-<img src='https://github.com/hedg-r52/job4j/tree/master/img/user.png' width=500>
+<a href='https://github.com/hedg-r52/job4j/blob/1d6847cd2e77229e52807aca65af83e6d40c01c9/img/user.png'>
+<img src='https://github.com/hedg-r52/job4j/blob/1d6847cd2e77229e52807aca65af83e6d40c01c9/img/user.png' width=500>
 </a>
 
 Пользователь может редактировать только свои данные.
