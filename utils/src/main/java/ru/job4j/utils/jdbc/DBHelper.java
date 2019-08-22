@@ -18,6 +18,7 @@ public class DBHelper implements AutoCloseable {
         this.dispatch.put(String.class, (index, ps, value) -> ps.setString(index, (String) value));
         this.dispatch.put(Long.class, (index, ps, value) -> ps.setLong(index, (Long) value));
         this.dispatch.put(Timestamp.class, (index, ps, value) -> ps.setTimestamp(index, (Timestamp) value));
+        this.dispatch.put(Boolean.class, (index, ps, value) -> ps.setBoolean(index, (Boolean) value));
     }
 
     public  <T> void forIndex(List<T> list, BiConEx<Integer, T> consumer) throws Exception {

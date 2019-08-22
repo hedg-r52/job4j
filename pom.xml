@@ -27,6 +27,7 @@
         <module>chapter_009</module>
         <module>exercises</module>
         <module>SqlRuParser</module>
+        <module>cinema</module>
     </modules>
     <profiles>
         <profile>
@@ -230,6 +231,11 @@
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
             <version>1.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.9</version>
         </dependency>
     </dependencies>
     <build>
