@@ -1,0 +1,1 @@
+alter table halls add constraint unique_seats unique(row, place);
