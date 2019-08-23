@@ -24,11 +24,10 @@ public class HallService implements Service {
 
     @Override
     public void executePay(Seat seat, User user) {
-        if (validateSeat(seat)) {
-            store.executePay(seat, user);
-        } else {
+        if (!validateSeat(seat)) {
             throw new IllegalStateException("Wrong price or seat is sold");
         }
+        store.executePay(seat, user);
     }
 
     private boolean validateSeat(Seat seat) {

@@ -68,8 +68,7 @@ public class DBStore implements Store {
                     }).orElse(null);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            //LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         return result;
     }
