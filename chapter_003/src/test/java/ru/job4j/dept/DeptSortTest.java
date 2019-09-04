@@ -16,13 +16,13 @@ import static org.junit.Assert.*;
 public class DeptSortTest {
 
     @Test
-    public void whenGetUnsortedListThenSortByDept() {
+    public void whenGetUnsortedListThenSortByDeptAsc() {
         DeptSort deptSort = new DeptSort();
         List<Org> depts = new ArrayList<>();
         depts.add(new Org("K1\\S2"));
         depts.add(new Org("K1\\S1\\D13"));
         depts.add(new Org("K2\\S2"));
-        List<Org> result = deptSort.sort(depts);
+        List<Org> result = deptSort.sortAsc(depts);
         List<Org> expected = new ArrayList<>();
         expected.add(new Org("K1"));
         expected.add(new Org("K1\\S1"));
@@ -30,6 +30,24 @@ public class DeptSortTest {
         expected.add(new Org("K1\\S2"));
         expected.add(new Org("K2"));
         expected.add(new Org("K2\\S2"));
+        assertThat(result, is(expected));
+    }
+
+    @Test
+    public void whenGetUnsortedListThenSortByDeptDesc() {
+        DeptSort deptSort = new DeptSort();
+        List<Org> depts = new ArrayList<>();
+        depts.add(new Org("K1\\S2"));
+        depts.add(new Org("K1\\S1\\D13"));
+        depts.add(new Org("K2\\S2"));
+        List<Org> result = deptSort.sortDesc(depts);
+        List<Org> expected = new ArrayList<>();
+        expected.add(new Org("K2"));
+        expected.add(new Org("K2\\S2"));
+        expected.add(new Org("K1"));
+        expected.add(new Org("K1\\S2"));
+        expected.add(new Org("K1\\S1"));
+        expected.add(new Org("K1\\S1\\D13"));
         assertThat(result, is(expected));
     }
 
